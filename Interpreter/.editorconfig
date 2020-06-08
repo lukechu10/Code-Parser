@@ -1,0 +1,19 @@
+# You can modify the rules from these initially generated values to suit your own policies
+# You can learn more about editorconfig here: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+[*.cs]
+
+
+#Core editorconfig formatting - indentation
+
+#use hard tabs for indentation
+indent_style = tab
+
+#Style - expression bodied member options
+
+#prefer block bodies for methods
+csharp_style_expression_bodied_methods = false:suggestion
+
+#Style - language keyword and framework type options
+
+#prefer the language keyword for local variables, method parameters, and class members, instead of the type name, for types that have a keyword to represent them
+dotnet_style_predefined_type_for_locals_parameters_members = true:suggestion
