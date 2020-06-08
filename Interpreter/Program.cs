@@ -9,6 +9,12 @@ namespace Interpreter {
 
 			TextReader reader = Console.In;
 			Lexer.Lexer lexer = new Lexer.Lexer(reader);
+
+			Token nextToken;
+			do {
+				nextToken = lexer.GetNextToken();
+				Console.WriteLine(nextToken);
+			} while (nextToken != Token.EndOfFile);
 		}
 	}
 }

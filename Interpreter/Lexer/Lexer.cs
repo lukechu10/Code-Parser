@@ -72,10 +72,11 @@ namespace Interpreter.Lexer {
 
 			// c is a number literal
 			else if (char.IsDigit((char)c)) {
-				do {
-					this._numberBuilder.Append(c);
-					c = this._reader.Read();
-				} while (char.IsDigit((char)c) || c == '.');
+				this._numberBuilder.Append((char)c);
+				// while next char is a number or '.', add to _numberBuilder
+				while (char.IsDigit((char)this._reader.Peek()) || this._reader.Peek() == '.') {
+					this._numberBuilder.Append((char)this._reader.Read());
+				}
 
 				this._lastNumber = double.Parse(this._numberBuilder.ToString());
 				this._numberBuilder.Clear(); // clear _numberBuilder for next token
@@ -85,11 +86,14 @@ namespace Interpreter.Lexer {
 
 			// comment until end of line
 			else if (c == '#') {
-				do {
-					c = this._reader.Read();
-				} while (c != EOF && c != '\n' && c != '\r');
+				while (c != EOF && c != '\n' && c != '\r') {
+					c = _reader.Read(); // throw away next char
+				}
 
-				if (c != EOF) return this.GetNextToken(); // recursively get next token after comment
+				// end of file not reached, continue reading stream to get next token
+				if (c != EOF) {
+					return this.GetNextToken(); // recursively get next token after comment
+				}
 			}
 
 			// found end of file
@@ -97,7 +101,7 @@ namespace Interpreter.Lexer {
 				return Token.EndOfFile;
 			}
 
-			// return character
+			// return a character
 			this._lastCharacter = (char)c;
 			return Token.Character;
 		}
