@@ -4,6 +4,8 @@ using YamlDotNet.Serialization;
 
 namespace Interpreter {
 	internal class Program {
+		private static readonly ISerializer serializer = new SerializerBuilder().Build();
+
 		public static void Main(string[] args) {
 			Console.WriteLine("Code Parser");
 
@@ -18,9 +20,13 @@ namespace Interpreter {
 						return; // exit program
 					default:
 						FunctionAST ast = parser.HandleTopLevelExpression(); // top level anonymous function
-						var serializer = new SerializerBuilder().Build();
-						var yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
-						Console.WriteLine(yaml);
+						if(ast != null) {
+							string yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
+							Console.WriteLine(yaml);
+						}
+						else {
+							Console.WriteLine("Invalid syntax, no abstract syntax tree generated");
+						}
 						break;
 				}
 			}
