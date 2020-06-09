@@ -70,7 +70,7 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the parenthesis expression</returns>
 		private ExprAST ParseParenExpr() {
-			Debug.Assert(this._scanner.LastCharacter == ')');
+			Debug.Assert(this._scanner.LastCharacter == '(');
 
 			this.GetNextToken(); // eat opening parenthesis '('
 
