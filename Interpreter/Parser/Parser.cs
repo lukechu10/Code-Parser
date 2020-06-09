@@ -151,7 +151,7 @@ namespace Interpreter.Parser {
 			else if (this.CurrentToken == Lexer.Token.Number) return this.ParseNumberExpr();
 			else if (this._scanner.LastCharacter == '(') return this.ParseParenExpr();
 			else {
-				Console.WriteLine("Unknown token when expecting an expression");
+				Console.WriteLine($"Unknown {this.CurrentToken} token when expecting an expression");
 				return null;
 			}
 		}
@@ -169,6 +169,17 @@ namespace Interpreter.Parser {
 		private ExprAST ParseBinOpRHS(int exprPrecedence, ExprAST lhs) {
 			while (true) {
 				int tokenPrecedence = this.GetCurrentTokenPrecedence();
+
+				if (tokenPrecedence == -1) {
+					// make sure this._scanner.LastCharacter is valid
+					switch (this._scanner.LastCharacter) {
+						case ';':
+							break;
+						default:
+							Console.WriteLine($"Invalid operator {this._scanner.LastCharacter}");
+							return null;
+					}
+				}
 
 				/* if this is a binary operator that binds at least as tightly as the current binary operator, consume it, otherwise we are done
 				 * Example: "1 * 2 + 3"
@@ -233,7 +244,7 @@ namespace Interpreter.Parser {
 			FunctionAST functionAST = this.ParseTopLevelExpr();
 
 			if(functionAST == null) {
-				this._scanner.GetNextToken(); // eat next token for error recovery
+				this._scanner.Reader.ReadLine(); // eat entire line for error recovery
 				return null;
 			}
 			else {

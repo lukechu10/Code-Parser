@@ -6,7 +6,7 @@ namespace Interpreter.Lexer {
 		/// <summary>
 		/// The reader for the Lexer to read from
 		/// </summary>
-		private readonly TextReader _reader;
+		public TextReader Reader { get; private set; }
 
 		#region token values
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Interpreter.Lexer {
 		/// </summary>
 		/// <param name="str">the string to be tokenized</param>
 		public Lexer(TextReader reader) {
-			this._reader = reader;
+			this.Reader = reader;
 		}
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace Interpreter.Lexer {
 
 			// skip any whitespace characters
 			while (char.IsWhiteSpace((char)c)) {
-				c = this._reader.Read();
+				c = this.Reader.Read();
 			}
 
 			// c is a letter: token can be a keyword or an identifier
@@ -51,8 +51,8 @@ namespace Interpreter.Lexer {
 				this._identifierBuilder.Append((char)c);
 
 				// get the entire identifier
-				while (char.IsLetterOrDigit((char)this._reader.Peek())) {
-					this._identifierBuilder.Append((char)this._reader.Read());
+				while (char.IsLetterOrDigit((char)this.Reader.Peek())) {
+					this._identifierBuilder.Append((char)this.Reader.Read());
 				}
 
 				this.LastIdentifier = this._identifierBuilder.ToString();
@@ -72,8 +72,8 @@ namespace Interpreter.Lexer {
 			else if (char.IsDigit((char)c)) {
 				this._numberBuilder.Append((char)c);
 				// while next char is a number or '.', add to _numberBuilder
-				while (char.IsDigit((char)this._reader.Peek()) || this._reader.Peek() == '.') {
-					this._numberBuilder.Append((char)this._reader.Read());
+				while (char.IsDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '.') {
+					this._numberBuilder.Append((char)this.Reader.Read());
 				}
 
 				this.LastNumber = double.Parse(this._numberBuilder.ToString());
@@ -85,7 +85,7 @@ namespace Interpreter.Lexer {
 			// comment until end of line
 			else if (c == '#') {
 				while (c != EOF && c != '\n' && c != '\r') {
-					c = this._reader.Read(); // throw away next char
+					c = this.Reader.Read(); // throw away next char
 				}
 
 				// end of file not reached, continue reading stream to get next token

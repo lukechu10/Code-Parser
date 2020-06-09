@@ -7,13 +7,11 @@ namespace Interpreter {
 		private static readonly ISerializer serializer = new SerializerBuilder().Build();
 
 		public static void Main(string[] args) {
-			Console.WriteLine("Code Parser");
-
 			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
 			Parser.Parser parser = new Parser.Parser(scanner);
 
 			while (true) {
-				Console.Write(">>> ");
+				Console.Write("ready> ");
 				parser.GetNextToken();
 				switch (parser.CurrentToken) {
 					case Lexer.Token.EndOfFile:
