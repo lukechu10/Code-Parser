@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Interpreter.Lexer {
-	public enum Token: ushort {
+﻿namespace Interpreter.Lexer {
+	public enum Token : ushort {
 		/// <summary>
 		/// End of file token
 		/// </summary>

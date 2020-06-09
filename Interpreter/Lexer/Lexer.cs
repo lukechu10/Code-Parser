@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 
 namespace Interpreter.Lexer {
-	class Lexer {
+	public sealed class Lexer {
 		/// <summary>
 		/// The reader for the Lexer to read from
 		/// </summary>
@@ -15,15 +13,15 @@ namespace Interpreter.Lexer {
 		/// Temp variable to store last variable identifier
 		/// </summary>
 		/// <value>String identifying the identifier</value>
-		private string _lastIdentifier;
+		public string LastIdentifier { get; private set; }
 		/// <summary>
 		/// Temp variable to store last double literal
 		/// </summary>
-		private double _lastNumber;
+		public double LastNumber { get; private set; }
 		/// <summary>
 		/// Temp variable to store last char token
 		/// </summary>
-		private char _lastCharacter;
+		public char LastCharacter { get; private set; }
 		#endregion
 		private readonly StringBuilder _identifierBuilder = new StringBuilder();
 		private readonly StringBuilder _numberBuilder = new StringBuilder();
@@ -57,11 +55,11 @@ namespace Interpreter.Lexer {
 					this._identifierBuilder.Append((char)this._reader.Read());
 				}
 
-				this._lastIdentifier = _identifierBuilder.ToString();
+				this.LastIdentifier = this._identifierBuilder.ToString();
 				this._identifierBuilder.Clear(); // clear _identifierBuilder for next token
 
 				// token type
-				Token token = this._lastIdentifier switch
+				Token token = this.LastIdentifier switch
 				{
 					"def" => Token.Definition,
 					"extern" => Token.Extern,
@@ -78,7 +76,7 @@ namespace Interpreter.Lexer {
 					this._numberBuilder.Append((char)this._reader.Read());
 				}
 
-				this._lastNumber = double.Parse(this._numberBuilder.ToString());
+				this.LastNumber = double.Parse(this._numberBuilder.ToString());
 				this._numberBuilder.Clear(); // clear _numberBuilder for next token
 
 				return Token.Number;
@@ -87,7 +85,7 @@ namespace Interpreter.Lexer {
 			// comment until end of line
 			else if (c == '#') {
 				while (c != EOF && c != '\n' && c != '\r') {
-					c = _reader.Read(); // throw away next char
+					c = this._reader.Read(); // throw away next char
 				}
 
 				// end of file not reached, continue reading stream to get next token
@@ -102,7 +100,7 @@ namespace Interpreter.Lexer {
 			}
 
 			// return a character
-			this._lastCharacter = (char)c;
+			this.LastCharacter = (char)c;
 			return Token.Character;
 		}
 	}

@@ -11,7 +11,7 @@ indent_style = tab
 #Style - expression bodied member options
 
 #prefer block bodies for methods
-csharp_style_expression_bodied_methods = false:suggestion
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
 
 #Style - language keyword and framework type options
 

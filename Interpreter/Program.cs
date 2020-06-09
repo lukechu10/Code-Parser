@@ -1,20 +1,29 @@
-﻿using Interpreter.Lexer;
+﻿using Interpreter.AST;
 using System;
-using System.IO;
+using YamlDotNet.Serialization;
 
 namespace Interpreter {
-	class Program {
-		static void Main(string[] args) {
-			Console.WriteLine("Hello World!");
+	internal class Program {
+		public static void Main(string[] args) {
+			Console.WriteLine("Code Parser");
 
-			TextReader reader = Console.In;
-			Lexer.Lexer lexer = new Lexer.Lexer(reader);
+			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
+			Parser.Parser parser = new Parser.Parser(scanner);
 
-			Token nextToken;
-			do {
-				nextToken = lexer.GetNextToken();
-				Console.WriteLine(nextToken);
-			} while (nextToken != Token.EndOfFile);
+			while (true) {
+				Console.Write(">>> ");
+				parser.GetNextToken();
+				switch (parser.CurrentToken) {
+					case Lexer.Token.EndOfFile:
+						return; // exit program
+					default:
+						FunctionAST ast = parser.HandleTopLevelExpression(); // top level anonymous function
+						var serializer = new SerializerBuilder().Build();
+						var yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
+						Console.WriteLine(yaml);
+						break;
+				}
+			}
 		}
 	}
 }
