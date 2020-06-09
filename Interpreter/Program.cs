@@ -23,6 +23,8 @@ namespace Interpreter {
 						if(ast != null) {
 							string yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
 							Console.WriteLine(yaml);
+
+							Console.WriteLine($"Evaluated result: {Evaluation.Evaluator.Evaluate(ast.Body)}");
 						}
 						else {
 							Console.WriteLine("Invalid syntax, no abstract syntax tree generated");
