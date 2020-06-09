@@ -14,9 +14,11 @@ namespace Interpreter.Parser {
 			// smaller value = lower precedence
 			_binOpPrecedence = new Dictionary<char, int>() {
 				['<'] = 10,
+				['>'] = 10,
 				['+'] = 20,
 				['-'] = 20,
-				['*'] = 40
+				['*'] = 40,
+				['/'] = 40
 			};
 		}
 

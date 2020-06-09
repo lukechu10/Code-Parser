@@ -13,7 +13,9 @@ namespace Interpreter.AST {
 				'+' => ExpressionType.Add,
 				'-' => ExpressionType.Substract,
 				'*' => ExpressionType.Multiply,
+				'/' => ExpressionType.Divide,
 				'<' => ExpressionType.LessThan,
+				'>' => ExpressionType.GreaterThan,
 				_ => throw new ArgumentException($"op {op} is not a valid operator")
 			};
 
