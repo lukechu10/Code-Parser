@@ -91,7 +91,7 @@ namespace Interpreter.Parser {
 		/// <summary>
 		/// Parses variable references and function calls
 		/// <code>
-		///  identifierexpr
+		/// identifierexpr
 		///		::= identifier
 		///		::= identifier '(' expression ')'
 		/// </code>
