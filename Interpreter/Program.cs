@@ -26,12 +26,22 @@ namespace Interpreter {
 
 						if (ast != null) {
 							string yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
-							Console.WriteLine(yaml);
+
+							ConsoleColor initialColor = Console.ForegroundColor; // save initial console foreground color
+
+							Console.ForegroundColor = ConsoleColor.DarkGray;
+							Console.WriteLine(yaml); // print abstract syntax tree in dark gray
+							Console.ForegroundColor = initialColor;
+
 							Console.WriteLine($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
-							Console.WriteLine($"Evaluated result: {Evaluation.Evaluator.Evaluate(ast.Body)}");
+							Console.Write("Evaluated result: ");
+
+							Console.ForegroundColor = ConsoleColor.DarkYellow;
+							Console.WriteLine(Evaluation.Evaluator.Evaluate(ast.Body)); // print evaluated result in yellow
+							Console.ForegroundColor = initialColor;
 						}
 						else {
-							Console.WriteLine("Invalid syntax, no abstract syntax tree generated");
+							Console.Error.WriteLine("Invalid syntax, no abstract syntax tree generated");
 						}
 						break;
 				}
