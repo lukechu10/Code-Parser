@@ -142,6 +142,7 @@ namespace Interpreter.Parser {
 		/// primaryexpr
 		///		::= identifierexpr
 		///		::= numberexpr
+		///		::= declarationexpr
 		///		::=	parenexpr
 		/// </code>
 		/// </summary>
@@ -149,6 +150,7 @@ namespace Interpreter.Parser {
 		private ExprAST ParsePrimaryExpr() {
 			if (this.CurrentToken == Lexer.Token.Identifier) return this.ParseIdentifierExpr();
 			else if (this.CurrentToken == Lexer.Token.Number) return this.ParseNumberExpr();
+			else if (this.CurrentToken == Lexer.Token.Keyword_LET) return this.ParseVariableDeclarationExpr();
 			else if (this._scanner.LastCharacter == '(') return this.ParseParenExpr();
 			else {
 				Console.WriteLine($"Unknown {this.CurrentToken} token when expecting an expression");
@@ -212,6 +214,43 @@ namespace Interpreter.Parser {
 		}
 
 		/// <summary>
+		/// Parses a variable declaration expression ("let" keyword)
+		/// <code>
+		/// declarationexpr
+		///		::= 'let' identifier
+		///		::= 'let' identifier '=' expression
+		/// </code>
+		/// </summary>
+		/// <returns>An <c>ExprAST</c> node representing the variable declaration expression (value of variable)</returns>
+		private ExprAST ParseVariableDeclarationExpr() {
+			Debug.Assert(this.CurrentToken == Lexer.Token.Keyword_LET);
+			this.GetNextToken(); // eat "let" keyword
+
+			if (this.CurrentToken != Lexer.Token.Identifier) {
+				Console.WriteLine("Expected an identifier after 'let' keyword");
+				return null;
+			}
+			Debug.Assert(this.CurrentToken == Lexer.Token.Identifier);
+
+			string identifier = this._scanner.LastIdentifier;
+			this.GetNextToken(); // eat identifier token
+
+			ExprAST initializerExpression;
+			if (this.CurrentToken == Lexer.Token.Character && this._scanner.LastCharacter == '=') {
+				this.GetNextToken(); // eat '=' character
+
+				// found an initializer after variable declaration
+				initializerExpression = this.ParseExpr();
+			}
+			else
+				// no initializer, use default value = 0
+				initializerExpression = new NumberExprAST(0);
+
+			// construct VariableDeclarationExprAST
+			return new VariableDeclarationExprAST(identifier, initializerExpression);
+		}
+
+		/// <summary>
 		/// Parses a mathematical expression
 		/// <code>
 		/// expression
@@ -245,7 +284,7 @@ namespace Interpreter.Parser {
 		public FunctionAST HandleTopLevelExpression() {
 			FunctionAST functionAST = this.ParseTopLevelExpr();
 
-			if(functionAST == null) {
+			if (functionAST == null) {
 				this._scanner.Reader.ReadLine(); // eat entire line for error recovery
 				return null;
 			}

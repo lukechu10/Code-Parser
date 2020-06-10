@@ -20,7 +20,7 @@ identifierexpr
     ::= identifier '(' expression ')'
 ```
 
-#### Variable declaration expression (WIP)
+#### Variable declaration expression
 *Example:* `let foo = 3` or `let foo = 1 + 2` or `let foo = bar + 1`
 ```
 declarationexpr
@@ -34,6 +34,7 @@ declarationexpr
 primaryexpr
 	::= identifierexpr
 	::= numberexpr
+	::= declarationexpr
 	::=	parenexpr
 ```
 

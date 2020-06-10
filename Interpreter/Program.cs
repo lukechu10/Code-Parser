@@ -31,7 +31,6 @@ namespace Interpreter {
 
 							Console.ForegroundColor = ConsoleColor.DarkGray;
 							Console.WriteLine(yaml); // print abstract syntax tree in dark gray
-							Console.ForegroundColor = initialColor;
 
 							Console.WriteLine($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
 							Console.Write("Evaluated result: ");

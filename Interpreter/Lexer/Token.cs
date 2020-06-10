@@ -23,6 +23,10 @@
 		/// <summary>
 		/// A Token represented by its character
 		/// </summary>
-		Character
+		Character,
+		/// <summary>
+		/// A Token representing the "let" keyword for variable declarations
+		/// </summary>
+		Keyword_LET
 	}
 }

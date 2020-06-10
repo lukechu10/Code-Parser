@@ -8,6 +8,7 @@ namespace Interpreter.Evaluation {
 			{
 				NumberExprAST _ => (expression as NumberExprAST).Value,
 				BinaryExprAST _ => EvaluateBinOpExpression(expression as BinaryExprAST),
+				VariableDeclarationExprAST _ => Evaluate((expression as VariableDeclarationExprAST).InitializerExpression),
 				_ => 0
 			};
 		}

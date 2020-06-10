@@ -10,6 +10,7 @@
 		Variable,
 		Prototype,
 		Function,
-		Number
+		Number,
+		VariableDeclaration
 	}
 }

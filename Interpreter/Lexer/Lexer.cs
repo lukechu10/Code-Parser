@@ -63,6 +63,7 @@ namespace Interpreter.Lexer {
 				{
 					"def" => Token.Definition,
 					"extern" => Token.Extern,
+					"let" => Token.Keyword_LET,
 					_ => Token.Identifier // identifier is not a keyword, identifier is a variable identifier
 				};
 				return token;
