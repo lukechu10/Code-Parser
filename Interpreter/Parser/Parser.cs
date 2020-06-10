@@ -173,6 +173,8 @@ namespace Interpreter.Parser {
 				if (tokenPrecedence == -1) {
 					// make sure this._scanner.LastCharacter is valid
 					switch (this._scanner.LastCharacter) {
+						case '(':
+						case ')':
 						case ';':
 							break;
 						default:
