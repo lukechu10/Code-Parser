@@ -46,12 +46,12 @@ namespace Interpreter.Lexer {
 				c = this.Reader.Read();
 			}
 
-			// c is a letter: token can be a keyword or an identifier
-			if (char.IsLetter((char)c)) {
+			// c is a letter or '_': token can be a keyword or an identifier
+			if (char.IsLetter((char)c) || c == '_') {
 				this._identifierBuilder.Append((char)c);
 
 				// get the entire identifier
-				while (char.IsLetterOrDigit((char)this.Reader.Peek())) {
+				while (char.IsLetterOrDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '_') {
 					this._identifierBuilder.Append((char)this.Reader.Read());
 				}
 
