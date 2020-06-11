@@ -1,6 +1,7 @@
 ﻿using Interpreter.AST;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Interpreter.Evaluation {
 	public sealed class Evaluator {
@@ -10,21 +11,47 @@ namespace Interpreter.Evaluation {
 		/// Evaluates an expression
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
-		/// <returns></returns>
-		public double Evaluate(ExprAST expression) {
+		/// <returns>A <c>double</c> with the value of the expression or a <c>string</c> with an error message</returns>
+		public object EvaluateExpression(ExprAST expression) {
+			try {
+				return this.Evaluate(expression);
+			}
+			catch (Exception err) {
+				return $"Error: {err.Message}";
+			}
+		}
+
+		/// <summary>
+		/// Evaluates an expression
+		/// </summary>
+		/// <param name="expression">the expression to evaluate</param>
+		private double Evaluate(ExprAST expression) {
 			return expression switch
 			{
-				NumberExprAST _ => (expression as NumberExprAST).Value,
-				BinaryExprAST _ => this.EvaluateBinOpExpression(expression as BinaryExprAST),
-				VariableExprAST _ => this.Variables[(expression as VariableExprAST).Name],
-				VariableDeclarationExprAST _ => this.EvaluateVariableDeclarationExpression(expression as VariableDeclarationExprAST),
+				NumberExprAST numberExpression => numberExpression.Value,
+				BinaryExprAST binaryExpression => this.EvaluateBinOpExpression(binaryExpression),
+				VariableExprAST variableExpression => this.EvaluateVariableExpression(variableExpression),
+				VariableDeclarationExprAST variableDeclarationExpression => this.EvaluateVariableDeclarationExpression(variableDeclarationExpression),
 				_ => 0
 			};
+		}
+
+		private double EvaluateVariableExpression(VariableExprAST expression) {
+			double variableValue;
+
+			if (this.Variables.TryGetValue(expression.Name, out variableValue)) {
+				return variableValue;
+			}
+			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
 		}
 
 		private double EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression) {
 			string identifier = expression.Name;
 			double initializerValue = this.Evaluate(expression.InitializerExpression);
+
+			if (this.Variables.ContainsKey(identifier)) {
+				throw new Exception($"Variable {identifier} already exists in current scope");
+			}
 			this.Variables[identifier] = initializerValue;
 
 			return initializerValue;
