@@ -11,6 +11,8 @@ namespace Interpreter {
 			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
 			Parser.Parser parser = new Parser.Parser(scanner);
 
+			var evaluator = new Evaluation.Evaluator();
+
 			while (true) {
 				Console.Write("ready> ");
 				parser.GetNextToken();
@@ -36,7 +38,7 @@ namespace Interpreter {
 							Console.Write("Evaluated result: ");
 
 							Console.ForegroundColor = ConsoleColor.DarkYellow;
-							Console.WriteLine(Evaluation.Evaluator.Evaluate(ast.Body)); // print evaluated result in yellow
+							Console.WriteLine(evaluator.Evaluate(ast.Body)); // print evaluated result in yellow
 							Console.ForegroundColor = initialColor;
 						}
 						else {

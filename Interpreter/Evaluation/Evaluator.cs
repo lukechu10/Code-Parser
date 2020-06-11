@@ -1,21 +1,38 @@
 ﻿using Interpreter.AST;
 using System;
+using System.Collections.Generic;
 
 namespace Interpreter.Evaluation {
-	internal class Evaluator {
-		public static double Evaluate(ExprAST expression) {
+	public sealed class Evaluator {
+		public Dictionary<string, double> Variables { get; private set; } = new Dictionary<string, double>();
+
+		/// <summary>
+		/// Evaluates an expression
+		/// </summary>
+		/// <param name="expression">the expression to evaluate</param>
+		/// <returns></returns>
+		public double Evaluate(ExprAST expression) {
 			return expression switch
 			{
 				NumberExprAST _ => (expression as NumberExprAST).Value,
-				BinaryExprAST _ => EvaluateBinOpExpression(expression as BinaryExprAST),
-				VariableDeclarationExprAST _ => Evaluate((expression as VariableDeclarationExprAST).InitializerExpression),
+				BinaryExprAST _ => this.EvaluateBinOpExpression(expression as BinaryExprAST),
+				VariableExprAST _ => this.Variables[(expression as VariableExprAST).Name],
+				VariableDeclarationExprAST _ => this.EvaluateVariableDeclarationExpression(expression as VariableDeclarationExprAST),
 				_ => 0
 			};
 		}
 
-		private static double EvaluateBinOpExpression(BinaryExprAST expression) {
-			double left = Evaluate(expression.LeftExpression);
-			double right = Evaluate(expression.RightExpression);
+		private double EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression) {
+			string identifier = expression.Name;
+			double initializerValue = this.Evaluate(expression.InitializerExpression);
+			this.Variables[identifier] = initializerValue;
+
+			return initializerValue;
+		}
+
+		private double EvaluateBinOpExpression(BinaryExprAST expression) {
+			double left = this.Evaluate(expression.LeftExpression);
+			double right = this.Evaluate(expression.RightExpression);
 
 			return expression.NodeType switch
 			{
