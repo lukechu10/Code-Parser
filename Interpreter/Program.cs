@@ -14,6 +14,7 @@ namespace Interpreter {
 			var evaluator = new Evaluation.Evaluator();
 
 			while (true) {
+				Console.ForegroundColor = ConsoleColor.Gray;
 				Console.Write("ready> ");
 				parser.GetNextToken();
 				switch (parser.CurrentToken) {
@@ -29,20 +30,22 @@ namespace Interpreter {
 						if (ast != null) {
 							string yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
 
-							ConsoleColor initialColor = Console.ForegroundColor; // save initial console foreground color
+							Log.Secondary(yaml); // print abstract syntax tree in dark gray
 
-							Console.ForegroundColor = ConsoleColor.DarkGray;
-							Console.WriteLine(yaml); // print abstract syntax tree in dark gray
-
-							Console.WriteLine($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
+							Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
 							Console.Write("Evaluated result: ");
 
-							Console.ForegroundColor = ConsoleColor.DarkYellow;
-							Console.WriteLine(evaluator.EvaluateExpression(ast.Body)); // print evaluated result in yellow
-							Console.ForegroundColor = initialColor;
+							object evaluateResult = evaluator.EvaluateExpression(ast.Body);
+							if (evaluateResult is string errorMessage) {
+								Log.Error(errorMessage);
+							}
+							else if (evaluateResult is double doubleResult) {
+								Log.Emphasis(doubleResult);
+							}
 						}
+
 						else {
-							Console.Error.WriteLine("Invalid syntax, no abstract syntax tree generated");
+							Log.Warning("Invalid syntax, no abstract syntax tree generated");
 						}
 						break;
 				}

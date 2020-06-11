@@ -78,7 +78,7 @@ namespace Interpreter.Parser {
 			if (expression == null) return null;
 
 			if (this._scanner.LastCharacter != ')') {
-				Console.WriteLine("Expected ')'");
+				Log.Error("Expected ')'");
 				return null;
 			}
 
@@ -162,7 +162,7 @@ namespace Interpreter.Parser {
 			else if (this.CurrentToken == Lexer.Token.Keyword_LET) return this.ParseVariableDeclarationExpr();
 			else if (this._scanner.LastCharacter == '(') return this.ParseParenExpr();
 			else {
-				Console.WriteLine($"Unknown {this.CurrentToken} token when expecting an expression");
+				Log.Error($"Unknown {this.CurrentToken} token when expecting an expression");
 				return null;
 			}
 		}
@@ -189,7 +189,7 @@ namespace Interpreter.Parser {
 						case ';':
 							break;
 						default:
-							Console.WriteLine($"Invalid operator {this._scanner.LastCharacter}");
+							Log.Error($"Invalid operator {this._scanner.LastCharacter}");
 							return null;
 					}
 				}
@@ -236,7 +236,7 @@ namespace Interpreter.Parser {
 			this.GetNextToken(); // eat "let" keyword
 
 			if (this.CurrentToken != Lexer.Token.Identifier) {
-				Console.WriteLine("Expected an identifier after 'let' keyword");
+				Log.Error("Expected an identifier after 'let' keyword");
 				return null;
 			}
 			Debug.Assert(this.CurrentToken == Lexer.Token.Identifier);
