@@ -43,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.ExprVisitor">
-    <Position X="12.25" Y="0.75" Width="1.5" />
+    <Position X="12.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAABEAAAAAQCgAAAAAAAAAAAAAgAAAIAAAQAAAA=</HashCode>
       <FileName>AST\ExprVisitor.cs</FileName>
@@ -71,10 +71,10 @@
     </TypeIdentifier>
   </Class>
   <Enum Name="Interpreter.AST.ExpressionType">
-    <Position X="14.5" Y="0.75" Width="1.5" />
+    <Position X="14.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>gCIAQAAAAQAAAAAAAUABAAIAAAAAAAAAAQQAAAAAACQ=</HashCode>
-      <FileName>AST\ExprType.cs</FileName>
+      <FileName>AST\ExpressionType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />
