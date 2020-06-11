@@ -94,6 +94,7 @@ namespace Interpreter.Parser {
 		/// identifierexpr
 		///		::= identifier
 		///		::= identifier '(' expression ')'
+		///		::= identifier '=' expression
 		/// </code>
 		/// </summary>
 		/// <returns>A <c>VariableExprAST</c> if identifier is a variable reference, a <c>CallExprAST</c> if identifier is a function call</returns>
@@ -103,38 +104,46 @@ namespace Interpreter.Parser {
 			string identifierName = this._scanner.LastIdentifier;
 			this.GetNextToken(); // eat identifier token
 
-			if (this._scanner.LastCharacter != '(') {
+			if (this._scanner.LastCharacter == '(') {
+				// parse function call expression
+				this.GetNextToken(); // eat opening parenthesis '('
+
+				List<ExprAST> arguments = new List<ExprAST>();
+
+				#region Read function call arguments
+				if (this._scanner.LastCharacter != ')') {
+					while (true) {
+						ExprAST arg = this.ParseExpr(); // get argument
+						if (arg == null) return null; // forward error
+
+						arguments.Add(arg);
+
+						if (this._scanner.LastCharacter == ')') break; // end of argument list reached
+
+						if (this._scanner.LastCharacter != ',') {
+							Debug.Assert(this._scanner.LastCharacter != ')' && this._scanner.LastCharacter != ',');
+							Console.WriteLine("Expected ')' or ',' in argument list");
+						}
+
+						this.GetNextToken(); // eat ','
+					}
+				}
+				#endregion
+
+				this.GetNextToken(); // eat closing parenthesis ')'
+
+				return new CallExprAST(identifierName, arguments);
+			}
+			else if (this._scanner.LastCharacter == '=') {
+				// parse variable assignment expression
+				this.GetNextToken(); // eat '=' character
+
+				ExprAST expression = this.ParseExpr(); // parse expression after '='
+				return new VariableAssignmentExprAST(identifierName, expression);
+			}
+			else {
 				return new VariableExprAST(identifierName); // parsed variable reference
 			}
-
-			Debug.Assert(this._scanner.LastCharacter == '('); // parse function call expression
-			this.GetNextToken(); // eat opening parenthesis '('
-
-			List<ExprAST> arguments = new List<ExprAST>();
-
-			#region Read function call arguments
-			if (this._scanner.LastCharacter != ')') {
-				while (true) {
-					ExprAST arg = this.ParseExpr(); // get argument
-					if (arg == null) return null; // forward error
-
-					arguments.Add(arg);
-
-					if (this._scanner.LastCharacter == ')') break; // end of argument list reached
-
-					if (this._scanner.LastCharacter != ',') {
-						Debug.Assert(this._scanner.LastCharacter != ')' && this._scanner.LastCharacter != ',');
-						Console.WriteLine("Expected ')' or ',' in argument list");
-					}
-
-					this.GetNextToken(); // eat ','
-				}
-			}
-			#endregion
-
-			this.GetNextToken(); // eat closing parenthesis ')'
-
-			return new CallExprAST(identifierName, arguments);
 		}
 
 		/// <summary>

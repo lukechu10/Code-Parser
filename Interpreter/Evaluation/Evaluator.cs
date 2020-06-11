@@ -31,6 +31,7 @@ namespace Interpreter.Evaluation {
 				NumberExprAST numberExpression => numberExpression.Value,
 				BinaryExprAST binaryExpression => this.EvaluateBinOpExpression(binaryExpression),
 				VariableExprAST variableExpression => this.EvaluateVariableExpression(variableExpression),
+				VariableAssignmentExprAST assignmentExpr => this.EvaluateVariableAssignmentExpression(assignmentExpr),
 				VariableDeclarationExprAST variableDeclarationExpression => this.EvaluateVariableDeclarationExpression(variableDeclarationExpression),
 				_ => 0
 			};
@@ -41,6 +42,14 @@ namespace Interpreter.Evaluation {
 
 			if (this.Variables.TryGetValue(expression.Name, out variableValue)) {
 				return variableValue;
+			}
+			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
+		}
+
+		private double EvaluateVariableAssignmentExpression(VariableAssignmentExprAST expression) {
+			if (this.Variables.ContainsKey(expression.Name)) {
+				this.Variables[expression.Name] = this.Evaluate(expression.AssignmentValue);
+				return this.Variables[expression.Name];
 			}
 			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
 		}

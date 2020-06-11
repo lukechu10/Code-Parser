@@ -11,6 +11,7 @@
 		Prototype,
 		Function,
 		Number,
-		VariableDeclaration
+		VariableDeclaration,
+		VariableAssignment
 	}
 }

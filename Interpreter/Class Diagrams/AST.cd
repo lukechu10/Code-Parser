@@ -1,72 +1,79 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Interpreter.AST.ExprAST">
-    <Position X="5.75" Y="2" Width="2" />
+    <Position X="8.5" Y="2" Width="2" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
       <FileName>AST\ExprAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.NumberExprAST">
-    <Position X="8.25" Y="4.25" Width="1.5" />
+    <Position X="11" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>AST\NumberExprAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.VariableExprAST">
-    <Position X="10.5" Y="4.25" Width="1.5" />
+    <Position X="13.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>AST\VariableExprAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.BinaryExprAST">
-    <Position X="12.75" Y="4.25" Width="1.5" />
+    <Position X="15.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAACAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>AST\BinaryExprAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.CallExprAST">
-    <Position X="6" Y="4.25" Width="1.5" />
+    <Position X="8.75" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAgAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>AST\CallExprAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.PrototypeAST">
-    <Position X="3.75" Y="4.25" Width="1.5" />
+    <Position X="6.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAA=</HashCode>
       <FileName>AST\PrototypeAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.ExprVisitor">
-    <Position X="9.5" Y="0.75" Width="1.5" />
+    <Position X="12.25" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAABEAAAAAQCgAAAAAAAAAAAAAgAAAIAAAQAAAA=</HashCode>
       <FileName>AST\ExprVisitor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.AST.FunctionAST">
-    <Position X="1.5" Y="4.25" Width="1.5" />
+    <Position X="4.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAACAAAAAAAAAAAAABAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>AST\FunctionAST.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Interpreter.Parser.Parser">
-    <Position X="15.5" Y="2.75" Width="1.5" />
+    <Position X="18" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BBAAAAAACAAAAIAACAAAAAAgAAAAEAEAAAAAABACAAE=</HashCode>
+      <HashCode>ABAAAAAACAAAAIAACAAAAAAgAAAAEAEAAQQAABICgAE=</HashCode>
       <FileName>Parser\Parser.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="Interpreter.AST.ExpressionType">
-    <Position X="11.75" Y="0.75" Width="1.5" />
+  <Class Name="Interpreter.AST.VariableDeclarationExprAST">
+    <Position X="2" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAIAQAAAAAAAAAAAAEABAAIAAAAAAAAAAQQAAAAAACA=</HashCode>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAQAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>AST\VariableDeclarationExprAST.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Interpreter.AST.ExpressionType">
+    <Position X="14.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCIAQAAAAQAAAAAAAUABAAIAAAAAAAAAAQQAAAAAACQ=</HashCode>
       <FileName>AST\ExprType.cs</FileName>
     </TypeIdentifier>
   </Enum>

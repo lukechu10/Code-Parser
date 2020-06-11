@@ -13,11 +13,12 @@ parenexpr ::= '(' expression ')'
 ```
 
 #### Identifier
-*Example:* `foo` or `foo()`
+*Example:* `foo` or `foo()` or `foo = 1` or `foo = bar + 1`
 ```
 identifierexpr
 	::= identifier
     ::= identifier '(' expression ')'
+	::= identifier '=' expression
 ```
 
 #### Variable declaration expression
