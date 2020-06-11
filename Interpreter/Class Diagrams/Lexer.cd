@@ -1,16 +1,44 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="Interpreter.Lexer.Lexer">
-    <Position X="2.75" Y="1.5" Width="1.5" />
+    <Position X="7.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEQAAAAAAAAAAAAAAAAAAAAACQAAAAAAAAAAAACABA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEAAACABA=</HashCode>
       <FileName>Lexer\Lexer.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Enum Name="Interpreter.Lexer.Token">
-    <Position X="0.5" Y="1.5" Width="1.5" />
+  <Class Name="Interpreter.Lexer.Token" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAACAAAAEABAAAAAAAAAAAAAAgAQAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Lexer\Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interpreter.Lexer.IdentifierToken">
+    <Position X="2.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Lexer\Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interpreter.Lexer.NumberToken">
+    <Position X="5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Lexer\Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interpreter.Lexer.OperatorToken">
+    <Position X="0.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Lexer\Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Interpreter.Lexer.TokenType">
+    <Position X="2.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAEABAAAQAAAAAAAAAAgAQAAAIAA=</HashCode>
       <FileName>Lexer\Token.cs</FileName>
     </TypeIdentifier>
   </Enum>

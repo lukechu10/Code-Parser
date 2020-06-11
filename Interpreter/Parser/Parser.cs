@@ -1,24 +1,24 @@
 ﻿using Interpreter.AST;
-using System;
+using Interpreter.Lexer;
 using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Interpreter.Parser {
 	public sealed class Parser {
-		private static readonly Dictionary<char, int> _binOpPrecedence;
+		private static readonly Dictionary<string, int> _binOpPrecedence;
 
-		public Lexer.Token CurrentToken { get; private set; }
-		private Lexer.Lexer _scanner;
+		public Token CurrentToken { get; private set; }
+		private readonly Lexer.Lexer _scanner;
 
 		static Parser() {
 			// smaller value = lower precedence
-			_binOpPrecedence = new Dictionary<char, int>() {
-				['<'] = 10,
-				['>'] = 10,
-				['+'] = 20,
-				['-'] = 20,
-				['*'] = 40,
-				['/'] = 40
+			_binOpPrecedence = new Dictionary<string, int>() {
+				["<"] = 10,
+				[">"] = 10,
+				["+"] = 20,
+				["-"] = 20,
+				["*"] = 40,
+				["/"] = 40
 			};
 		}
 
@@ -30,7 +30,7 @@ namespace Interpreter.Parser {
 		/// Gets the next Token from _scanner and saves the result into _currentToken
 		/// </summary>
 		/// <returns>The new Token</returns>
-		public Lexer.Token GetNextToken() {
+		public Token GetNextToken() {
 			return this.CurrentToken = this._scanner.GetNextToken();
 		}
 
@@ -39,10 +39,10 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>A number representing the operator precedence of the current <c>Token</c> or <c>-1</c> if precedence not found</returns>
 		private int GetCurrentTokenPrecedence() {
-			if (this.CurrentToken != Lexer.Token.Character) return -1;
+			if (!(this.CurrentToken is OperatorToken operatorToken)) return -1; // not an OperatorToken
 
-			int precedence;
-			if (_binOpPrecedence.TryGetValue(this._scanner.LastCharacter, out precedence)) {
+			string operatorLexeme = operatorToken.Operator;
+			if (_binOpPrecedence.TryGetValue(operatorLexeme, out int precedence)) {
 				return precedence;
 			}
 
@@ -55,9 +55,10 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the number literal</returns>
 		private ExprAST ParseNumberExpr() {
-			Debug.Assert(this.CurrentToken == Lexer.Token.Number);
+			var numberToken = this.CurrentToken as NumberToken;
+			Debug.Assert(numberToken != null);
 
-			ExprAST result = new NumberExprAST(this._scanner.LastNumber);
+			ExprAST result = new NumberExprAST(numberToken.Value);
 			this.GetNextToken(); // eat number
 			return result;
 		}
@@ -70,19 +71,20 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the parenthesis expression</returns>
 		private ExprAST ParseParenExpr() {
-			Debug.Assert(this._scanner.LastCharacter == '(');
+			var operatorToken = this.CurrentToken as OperatorToken;
+			Debug.Assert(operatorToken != null && operatorToken.Operator == "(");
 
 			this.GetNextToken(); // eat opening parenthesis '('
 
 			ExprAST expression = this.ParseExpr(); // parse expression between parenthesis
 			if (expression == null) return null;
 
-			if (this._scanner.LastCharacter != ')') {
-				Log.Error("Expected ')'");
+			if (!(this.CurrentToken is OperatorToken closeParanthesisToken) || closeParanthesisToken.Operator != ")") {
+				Log.Error("Expected ')' after expression");
 				return null;
 			}
 
-			Debug.Assert(this._scanner.LastCharacter == ')');
+			Debug.Assert(closeParanthesisToken.Operator == ")");
 			this.GetNextToken(); // eat closing parenthesis ')'
 
 			return expression;
@@ -99,30 +101,39 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>A <c>VariableExprAST</c> if identifier is a variable reference, a <c>CallExprAST</c> if identifier is a function call</returns>
 		private ExprAST ParseIdentifierExpr() {
-			Debug.Assert(this.CurrentToken == Lexer.Token.Identifier);
+			Debug.Assert(this.CurrentToken is IdentifierToken);
 
-			string identifierName = this._scanner.LastIdentifier;
+			string identifierName = (this.CurrentToken as IdentifierToken).Identifier;
 			this.GetNextToken(); // eat identifier token
 
-			if (this._scanner.LastCharacter == '(') {
+			if (this.CurrentToken is OperatorToken openParnethesisToken && openParnethesisToken.Operator == "(") {
 				// parse function call expression
 				this.GetNextToken(); // eat opening parenthesis '('
 
 				List<ExprAST> arguments = new List<ExprAST>();
 
 				#region Read function call arguments
-				if (this._scanner.LastCharacter != ')') {
+				// if at least 1 argument
+				if (this.CurrentToken is OperatorToken closeParanthesisToken && closeParanthesisToken.Operator != ")") {
+
 					while (true) {
 						ExprAST arg = this.ParseExpr(); // get argument
 						if (arg == null) return null; // forward error
 
 						arguments.Add(arg);
 
-						if (this._scanner.LastCharacter == ')') break; // end of argument list reached
+						if (this.CurrentToken is OperatorToken operatorToken) {
+							if (operatorToken.Operator == ")") break; // end of argument list reached
 
-						if (this._scanner.LastCharacter != ',') {
-							Debug.Assert(this._scanner.LastCharacter != ')' && this._scanner.LastCharacter != ',');
-							Console.WriteLine("Expected ')' or ',' in argument list");
+							else if (operatorToken.Operator != ",") {
+								Debug.Assert(operatorToken.Operator != ")" && operatorToken.Operator != ",");
+								Log.Error("Expected ')' or ',' in argument list");
+							}
+						}
+
+						else {
+							// not ")" or "," after expression
+							Log.Error("Expected ')' or ',' after expression in argument list");
 						}
 
 						this.GetNextToken(); // eat ','
@@ -134,7 +145,7 @@ namespace Interpreter.Parser {
 
 				return new CallExprAST(identifierName, arguments);
 			}
-			else if (this._scanner.LastCharacter == '=') {
+			else if ((this.CurrentToken is OperatorToken equalsToken) && equalsToken.Operator == "=") {
 				// parse variable assignment expression
 				this.GetNextToken(); // eat '=' character
 
@@ -157,13 +168,23 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the primary expression</returns>
 		private ExprAST ParsePrimaryExpr() {
-			if (this.CurrentToken == Lexer.Token.Identifier) return this.ParseIdentifierExpr();
-			else if (this.CurrentToken == Lexer.Token.Number) return this.ParseNumberExpr();
-			else if (this.CurrentToken == Lexer.Token.Keyword_LET) return this.ParseVariableDeclarationExpr();
-			else if (this._scanner.LastCharacter == '(') return this.ParseParenExpr();
-			else {
-				Log.Error($"Unknown {this.CurrentToken} token when expecting an expression");
-				return null;
+			switch (this.CurrentToken) {
+				case IdentifierToken _:
+					return this.ParseIdentifierExpr();
+				case NumberToken _:
+					return this.ParseNumberExpr();
+				case OperatorToken operatorToken:
+					if (operatorToken.Operator == "(") return this.ParseParenExpr();
+					else {
+						Log.Error($"Unexpected operator {operatorToken.Operator} when expecting an expression");
+						return null;
+					}
+				default:
+					// keyword token
+					switch (this.CurrentToken.TokenType) {
+						case TokenType.Keyword_LET: return this.ParseVariableDeclarationExpr();
+						default: return null;
+					}
 			}
 		}
 
@@ -183,13 +204,14 @@ namespace Interpreter.Parser {
 
 				if (tokenPrecedence == -1) {
 					// make sure this._scanner.LastCharacter is valid
-					switch (this._scanner.LastCharacter) {
-						case '(':
-						case ')':
-						case ';':
+					string operatorLexeme = (this.CurrentToken as OperatorToken).Operator;
+					switch (operatorLexeme) {
+						case "(":
+						case ")":
+						case ";":
 							break;
 						default:
-							Log.Error($"Invalid operator {this._scanner.LastCharacter}");
+							Log.Error($"Invalid operator {operatorLexeme}");
 							return null;
 					}
 				}
@@ -204,8 +226,8 @@ namespace Interpreter.Parser {
 					return lhs;
 				}
 
-				Debug.Assert(this.CurrentToken == Lexer.Token.Character);
-				char binaryOperator = this._scanner.LastCharacter;
+				Debug.Assert(this.CurrentToken is OperatorToken);
+				string binaryOperator = (this.CurrentToken as OperatorToken).Operator;
 				this.GetNextToken(); // eat binary operator
 
 				ExprAST rhs = this.ParsePrimaryExpr(); // parse expression after binary operator
@@ -232,20 +254,20 @@ namespace Interpreter.Parser {
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the variable declaration expression (value of variable)</returns>
 		private ExprAST ParseVariableDeclarationExpr() {
-			Debug.Assert(this.CurrentToken == Lexer.Token.Keyword_LET);
+			Debug.Assert(this.CurrentToken.TokenType == TokenType.Keyword_LET);
 			this.GetNextToken(); // eat "let" keyword
 
-			if (this.CurrentToken != Lexer.Token.Identifier) {
+			if (this.CurrentToken.TokenType != TokenType.Identifier) {
 				Log.Error("Expected an identifier after 'let' keyword");
 				return null;
 			}
-			Debug.Assert(this.CurrentToken == Lexer.Token.Identifier);
+			Debug.Assert(this.CurrentToken is IdentifierToken);
 
-			string identifier = this._scanner.LastIdentifier;
+			string identifier = (this.CurrentToken as IdentifierToken).Identifier;
 			this.GetNextToken(); // eat identifier token
 
 			ExprAST initializerExpression;
-			if (this.CurrentToken == Lexer.Token.Character && this._scanner.LastCharacter == '=') {
+			if (this.CurrentToken is OperatorToken operatorToken && operatorToken.Operator == "=") {
 				this.GetNextToken(); // eat '=' character
 
 				// found an initializer after variable declaration

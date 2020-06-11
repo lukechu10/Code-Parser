@@ -7,15 +7,15 @@ namespace Interpreter.AST {
 
 		public override ExpressionType NodeType { get; protected set; }
 
-		public BinaryExprAST(char op, ExprAST leftExpression, ExprAST rightExpression) {
+		public BinaryExprAST(string op, ExprAST leftExpression, ExprAST rightExpression) {
 			this.NodeType = op switch
 			{
-				'+' => ExpressionType.Add,
-				'-' => ExpressionType.Substract,
-				'*' => ExpressionType.Multiply,
-				'/' => ExpressionType.Divide,
-				'<' => ExpressionType.LessThan,
-				'>' => ExpressionType.GreaterThan,
+				"+" => ExpressionType.Add,
+				"-" => ExpressionType.Substract,
+				"*" => ExpressionType.Multiply,
+				"/" => ExpressionType.Divide,
+				"<" => ExpressionType.LessThan,
+				">" => ExpressionType.GreaterThan,
 				_ => throw new ArgumentException($"op {op} is not a valid operator")
 			};
 

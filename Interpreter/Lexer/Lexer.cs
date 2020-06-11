@@ -8,34 +8,19 @@ namespace Interpreter.Lexer {
 		/// </summary>
 		public TextReader Reader { get; private set; }
 
-		#region token values
-		/// <summary>
-		/// Temp variable to store last variable identifier
-		/// </summary>
-		/// <value>String identifying the identifier</value>
-		public string LastIdentifier { get; private set; }
-		/// <summary>
-		/// Temp variable to store last double literal
-		/// </summary>
-		public double LastNumber { get; private set; }
-		/// <summary>
-		/// Temp variable to store last char token
-		/// </summary>
-		public char LastCharacter { get; private set; }
-		#endregion
 		private readonly StringBuilder _identifierBuilder = new StringBuilder();
 		private readonly StringBuilder _numberBuilder = new StringBuilder();
 
 		/// <summary>
-		/// Creates a new Lexer instance which tokenizes the string str into <c>Token</c>s
+		/// Creates a new Lexer instance which reads from the <c>TextReader</c>
 		/// </summary>
-		/// <param name="str">the string to be tokenized</param>
+		/// <param name="reader">The reader to read input from</param>
 		public Lexer(TextReader reader) {
 			this.Reader = reader;
 		}
 
 		/// <summary>
-		/// Tokenizes _str and saves array of tokens
+		/// Reads the next <c>Token</c>
 		/// </summary>
 		public Token GetNextToken() {
 			const int EOF = -1; // end of file
@@ -55,17 +40,18 @@ namespace Interpreter.Lexer {
 					this._identifierBuilder.Append((char)this.Reader.Read());
 				}
 
-				this.LastIdentifier = this._identifierBuilder.ToString();
+				string identifier = this._identifierBuilder.ToString(); // save identifier string
 				this._identifierBuilder.Clear(); // clear _identifierBuilder for next token
 
-				// token type
-				Token token = this.LastIdentifier switch
+				// determine if identifier is a keyword
+				Token token = identifier switch
 				{
-					"def" => Token.Definition,
-					"extern" => Token.Extern,
-					"let" => Token.Keyword_LET,
-					_ => Token.Identifier // identifier is not a keyword, identifier is a variable identifier
+					"def" => new Token(TokenType.Keyword_DEF),
+					"extern" => new Token(TokenType.Keyword_EXTERN),
+					"let" => new Token(TokenType.Keyword_LET),
+					_ => new IdentifierToken(identifier) // identifier is not a keyword, identifier is a variable identifier
 				};
+
 				return token;
 			}
 
@@ -77,10 +63,10 @@ namespace Interpreter.Lexer {
 					this._numberBuilder.Append((char)this.Reader.Read());
 				}
 
-				this.LastNumber = double.Parse(this._numberBuilder.ToString());
+				double value = double.Parse(this._numberBuilder.ToString());
 				this._numberBuilder.Clear(); // clear _numberBuilder for next token
 
-				return Token.Number;
+				return new NumberToken(value);
 			}
 
 			// comment until end of line
@@ -97,12 +83,12 @@ namespace Interpreter.Lexer {
 
 			// found end of file
 			else if (c == EOF) {
-				return Token.EndOfFile;
+				return new Token(TokenType.EndOfFile);
 			}
 
 			// return a character
-			this.LastCharacter = (char)c;
-			return Token.Character;
+			string operatorLexeme = ((char)c).ToString();
+			return new OperatorToken(operatorLexeme);
 		}
 	}
 }

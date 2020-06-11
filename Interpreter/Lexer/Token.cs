@@ -1,17 +1,9 @@
 ﻿namespace Interpreter.Lexer {
-	public enum Token : ushort {
+	public enum TokenType : ushort {
 		/// <summary>
 		/// End of file token
 		/// </summary>
 		EndOfFile,
-		/// <summary>
-		/// Function definition keyword
-		/// </summary>
-		Definition,
-		/// <summary>
-		/// External reference
-		/// </summary>
-		Extern,
 		/// <summary>
 		/// Identifier for a variable
 		/// </summary>
@@ -23,10 +15,54 @@
 		/// <summary>
 		/// A Token represented by its character
 		/// </summary>
-		Character,
+		Operator,
 		/// <summary>
 		/// A Token representing the "let" keyword for variable declarations
 		/// </summary>
-		Keyword_LET
+		Keyword_LET,
+		/// <summary>
+		/// Function definition keyword
+		/// </summary>
+		Keyword_DEF,
+		/// <summary>
+		/// External reference keyword
+		/// </summary>
+		Keyword_EXTERN
+	}
+
+	public class Token {
+		/// <summary>
+		/// The type of the <c>Token</c>
+		/// </summary>
+		public TokenType TokenType { get; private set; }
+
+		public Token(TokenType tokenType) => this.TokenType = tokenType;
+	}
+
+	public sealed class IdentifierToken : Token {
+		public readonly string Identifier;
+
+		public IdentifierToken(string identifier) : base(TokenType.Identifier) {
+			this.Identifier = identifier;
+		}
+	}
+
+	public sealed class NumberToken : Token {
+		public readonly double Value;
+
+		public NumberToken(double value) : base(TokenType.Number) {
+			this.Value = value;
+		}
+	}
+
+	public sealed class OperatorToken : Token {
+		/// <summary>
+		/// The lexeme of the operator represented by the <c>OperatorToken</c>
+		/// </summary>
+		public readonly string Operator;
+
+		public OperatorToken(string operatorLexeme) : base(TokenType.Operator) {
+			this.Operator = operatorLexeme;
+		}
 	}
 }

@@ -17,8 +17,8 @@ namespace Interpreter {
 				Console.ForegroundColor = ConsoleColor.Gray;
 				Console.Write("ready> ");
 				parser.GetNextToken();
-				switch (parser.CurrentToken) {
-					case Lexer.Token.EndOfFile:
+				switch (parser.CurrentToken.TokenType) {
+					case Lexer.TokenType.EndOfFile:
 						return; // exit program
 					default:
 						Stopwatch stopwatch = new Stopwatch();
@@ -33,6 +33,7 @@ namespace Interpreter {
 							Log.Secondary(yaml); // print abstract syntax tree in dark gray
 
 							Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
+							Console.ForegroundColor = ConsoleColor.DarkGray;
 							Console.Write("Evaluated result: ");
 
 							object evaluateResult = evaluator.EvaluateExpression(ast.Body);
