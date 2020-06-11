@@ -36,7 +36,7 @@ primaryexpr
 	::= identifierexpr
 	::= numberexpr
 	::= declarationexpr
-	::=	parenexpr
+	::= parenexpr
 ```
 
 #### Binary operator right hand side
