@@ -21,9 +21,9 @@
 		/// </summary>
 		Keyword_LET,
 		/// <summary>
-		/// Function definition keyword
+		/// Function declaration keyword
 		/// </summary>
-		Keyword_DEF,
+		Keyword_FUNCTION,
 		/// <summary>
 		/// External reference keyword
 		/// </summary>

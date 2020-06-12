@@ -95,7 +95,7 @@ namespace Interpreter.Parser {
 		/// <code>
 		/// identifierexpr
 		///		::= identifier
-		///		::= identifier '(' expression ')'
+		///		::= identifier '(' expression* ')'
 		///		::= identifier '=' expression
 		/// </code>
 		/// </summary>
@@ -155,6 +155,117 @@ namespace Interpreter.Parser {
 			else {
 				return new VariableExprAST(identifierName); // parsed variable reference
 			}
+		}
+
+		/// <summary>
+		/// Parses a variable declaration expression ("let" keyword)
+		/// <code>
+		/// declarationexpr
+		///		::= 'let' identifier
+		///		::= 'let' identifier '=' expression
+		/// </code>
+		/// </summary>
+		/// <returns>An <c>ExprAST</c> node representing the variable declaration expression (value of variable)</returns>
+		private ExprAST ParseVariableDeclarationExpr() {
+			Debug.Assert(this.CurrentToken.TokenType == TokenType.Keyword_LET);
+			this.GetNextToken(); // eat "let" keyword
+
+			if (this.CurrentToken.TokenType != TokenType.Identifier) {
+				Log.Error("Expected an identifier after 'let' keyword");
+				return null;
+			}
+			Debug.Assert(this.CurrentToken is IdentifierToken);
+
+			string identifier = (this.CurrentToken as IdentifierToken).Identifier;
+			this.GetNextToken(); // eat identifier token
+
+			ExprAST initializerExpression;
+			if (this.CurrentToken is OperatorToken operatorToken && operatorToken.Operator == "=") {
+				this.GetNextToken(); // eat '=' character
+
+				// found an initializer after variable declaration
+				initializerExpression = this.ParseExpr();
+			}
+			else
+				// no initializer, use default value = 0
+				initializerExpression = new NumberExprAST(0);
+
+			// construct VariableDeclarationExprAST
+			return new VariableDeclarationExprAST(identifier, initializerExpression);
+		}
+
+		/// <summary>
+		/// Parses a prototype expression
+		/// <code>
+		/// prototype
+		///		::= identifier '(' identifier* ')'
+		/// </code>
+		/// </summary>
+		/// <returns>A <c>PrototypeAST</c> representing the prototype expression</returns>
+		private PrototypeAST ParsePrototype() {
+			if (!(this.CurrentToken is IdentifierToken identifierToken)) {
+				Log.Error("Expected function name in prototype");
+				return null;
+			}
+
+			string functionIdentifier = identifierToken.Identifier;
+			this.GetNextToken(); // eat identifier Token
+
+			if (!(this.CurrentToken is OperatorToken openParenthesisToken && openParenthesisToken.Operator == "(")) {
+				Log.Error("Expected '(' in prototype");
+				return null;
+			}
+			this.GetNextToken(); // eat "(" Token
+
+			var arguments = new List<string>();
+
+			while(this.CurrentToken is IdentifierToken identifier) {
+				arguments.Add(identifier.Identifier); // add identifier to arguments list
+				this.GetNextToken(); // eat identifier Token
+
+				if (this.CurrentToken is OperatorToken operatorToken) {
+					if (operatorToken.Operator == ",") this.GetNextToken(); // eat ',' operator
+					else if (operatorToken.Operator == ")") break; // end of prototype found
+					else {
+						Log.Error($"Unknown operator {operatorToken.Operator} in prototype");
+						return null;
+					}
+				}
+				else {
+					Log.Error("Expected an operator after identifier in prototype");
+					return null;
+				}
+			}
+
+			Debug.Assert((this.CurrentToken as OperatorToken)?.Operator == ")");
+			this.GetNextToken(); // eat ")" Token
+
+			return new PrototypeAST(functionIdentifier, arguments); // construct PrototypeAST
+		}
+
+		/// <summary>
+		/// Parses a function declaration statement
+		/// <code>
+		/// functiondeclaration
+		/// 	::= 'function' prototype '=>' expression
+		/// </code>
+		/// </summary>
+		/// <returns>An <c>FunctionAST</c> node representing the function declaration statement</returns>
+		private FunctionAST ParseFunction() {
+			Debug.Assert(this.CurrentToken.TokenType == TokenType.Keyword_FUNCTION);
+
+			this.GetNextToken(); // eat "function" keyword
+			PrototypeAST prototype = this.ParsePrototype();
+
+			if(prototype == null) return null;
+
+			this.GetNextToken(); // eat '='
+			this.GetNextToken(); // eat '=>'
+
+			ExprAST body = this.ParseExpr();
+			if(body == null) return null;
+
+			return new FunctionAST(prototype, body);
 		}
 
 		/// <summary>
@@ -245,43 +356,6 @@ namespace Interpreter.Parser {
 		}
 
 		/// <summary>
-		/// Parses a variable declaration expression ("let" keyword)
-		/// <code>
-		/// declarationexpr
-		///		::= 'let' identifier
-		///		::= 'let' identifier '=' expression
-		/// </code>
-		/// </summary>
-		/// <returns>An <c>ExprAST</c> node representing the variable declaration expression (value of variable)</returns>
-		private ExprAST ParseVariableDeclarationExpr() {
-			Debug.Assert(this.CurrentToken.TokenType == TokenType.Keyword_LET);
-			this.GetNextToken(); // eat "let" keyword
-
-			if (this.CurrentToken.TokenType != TokenType.Identifier) {
-				Log.Error("Expected an identifier after 'let' keyword");
-				return null;
-			}
-			Debug.Assert(this.CurrentToken is IdentifierToken);
-
-			string identifier = (this.CurrentToken as IdentifierToken).Identifier;
-			this.GetNextToken(); // eat identifier token
-
-			ExprAST initializerExpression;
-			if (this.CurrentToken is OperatorToken operatorToken && operatorToken.Operator == "=") {
-				this.GetNextToken(); // eat '=' character
-
-				// found an initializer after variable declaration
-				initializerExpression = this.ParseExpr();
-			}
-			else
-				// no initializer, use default value = 0
-				initializerExpression = new NumberExprAST(0);
-
-			// construct VariableDeclarationExprAST
-			return new VariableDeclarationExprAST(identifier, initializerExpression);
-		}
-
-		/// <summary>
 		/// Parses a mathematical expression
 		/// <code>
 		/// expression
@@ -314,6 +388,18 @@ namespace Interpreter.Parser {
 
 		public FunctionAST HandleTopLevelExpression() {
 			FunctionAST functionAST = this.ParseTopLevelExpr();
+
+			if (functionAST == null) {
+				this._scanner.Reader.ReadLine(); // eat entire line for error recovery
+				return null;
+			}
+			else {
+				return functionAST;
+			}
+		}
+
+		public FunctionAST HandleFunction() {
+			FunctionAST functionAST = this.ParseFunction();
 
 			if (functionAST == null) {
 				this._scanner.Reader.ReadLine(); // eat entire line for error recovery

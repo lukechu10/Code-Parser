@@ -17,7 +17,7 @@ parenexpr ::= '(' expression ')'
 ```
 identifierexpr
 	::= identifier
-    ::= identifier '(' expression ')'
+    ::= identifier '(' expression* ')'
 	::= identifier '=' expression
 ```
 
@@ -27,6 +27,13 @@ identifierexpr
 declarationexpr
     ::= 'let' identifier
     ::= 'let' identifier '=' expression
+```
+
+#### Function declaration (WIP)
+*Example:* `function foo() => 1 + 1` or `function foo(x) => x * x` or `function foo(x, y) => x + y`
+```
+functiondeclaration
+	::= 'function' identifier '(' expression* ')' '=>' expression
 ```
 
 #### Primary expression

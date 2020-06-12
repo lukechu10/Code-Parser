@@ -17,39 +17,43 @@ namespace Interpreter {
 				Console.ForegroundColor = ConsoleColor.Gray;
 				Console.Write("ready> ");
 				parser.GetNextToken();
+
+				FunctionAST functionAST;
+				Stopwatch stopwatch = new Stopwatch();
+				stopwatch.Start();
 				switch (parser.CurrentToken.TokenType) {
 					case Lexer.TokenType.EndOfFile:
 						return; // exit program
+					case Lexer.TokenType.Keyword_FUNCTION:
+						functionAST = parser.HandleFunction();
+						break;
 					default:
-						Stopwatch stopwatch = new Stopwatch();
-
-						stopwatch.Start();
-						FunctionAST ast = parser.HandleTopLevelExpression(); // top level anonymous function
-						stopwatch.Stop();
-
-						if (ast != null) {
-							string yaml = serializer.Serialize(ast.Body); // serialize abstract syntax tree to YAML
-
-							Log.Secondary(yaml); // print abstract syntax tree in dark gray
-
-							Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
-							Console.ForegroundColor = ConsoleColor.DarkGray;
-							Console.Write("Evaluated result: ");
-
-							object evaluateResult = evaluator.EvaluateExpression(ast.Body);
-							if (evaluateResult is string errorMessage) {
-								Log.Error(errorMessage);
-							}
-							else if (evaluateResult is double doubleResult) {
-								Log.Emphasis(doubleResult);
-							}
-						}
-
-						else {
-							Log.Warning("Invalid syntax, no abstract syntax tree generated");
-						}
+						functionAST = parser.HandleTopLevelExpression(); // top level anonymous function
 						break;
 				}
+
+				stopwatch.Stop();
+
+				if (functionAST != null) {
+					string yaml = serializer.Serialize(functionAST); // serialize abstract syntax tree to YAML
+
+					Log.Secondary(yaml); // print abstract syntax tree in dark gray
+
+					Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
+					Console.ForegroundColor = ConsoleColor.DarkGray;
+					Console.Write("Evaluated result: ");
+
+					object evaluateResult = evaluator.EvaluateExpression(functionAST);
+					if (evaluateResult is string errorMessage) {
+						Log.Error(errorMessage);
+					}
+					else if (evaluateResult is double doubleResult) {
+						Log.Emphasis(doubleResult);
+					}
+				}
+				else {
+					Log.Warning("Invalid syntax, no abstract syntax tree generated");
+				}				
 			}
 		}
 	}

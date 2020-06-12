@@ -33,7 +33,7 @@ namespace Interpreter.Evaluation {
 				VariableExprAST variableExpression => this.EvaluateVariableExpression(variableExpression),
 				VariableAssignmentExprAST assignmentExpr => this.EvaluateVariableAssignmentExpression(assignmentExpr),
 				VariableDeclarationExprAST variableDeclarationExpression => this.EvaluateVariableDeclarationExpression(variableDeclarationExpression),
-				_ => 0
+				_ => throw new NotImplementedException($"Handling of {expression.GetType()} has not been implemented")
 			};
 		}
 

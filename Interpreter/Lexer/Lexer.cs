@@ -46,7 +46,7 @@ namespace Interpreter.Lexer {
 				// determine if identifier is a keyword
 				Token token = identifier switch
 				{
-					"def" => new Token(TokenType.Keyword_DEF),
+					"function" => new Token(TokenType.Keyword_FUNCTION),
 					"extern" => new Token(TokenType.Keyword_EXTERN),
 					"let" => new Token(TokenType.Keyword_LET),
 					_ => new IdentifierToken(identifier) // identifier is not a keyword, identifier is a variable identifier
