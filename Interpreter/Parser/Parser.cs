@@ -198,18 +198,19 @@ namespace Interpreter.Parser {
 		/// Parses a prototype expression
 		/// <code>
 		/// prototype
-		///		::= identifier '(' identifier* ')'
+		///		::= identifier? '(' identifier* ')'
 		/// </code>
 		/// </summary>
 		/// <returns>A <c>PrototypeAST</c> representing the prototype expression</returns>
 		private PrototypeAST ParsePrototype() {
-			if (!(this.CurrentToken is IdentifierToken identifierToken)) {
-				Log.Error("Expected function name in prototype");
-				return null;
+			string functionIdentifier;
+			if (this.CurrentToken is IdentifierToken identifierToken) {
+				functionIdentifier = identifierToken.Identifier;
+				this.GetNextToken(); // eat identifier Token
 			}
-
-			string functionIdentifier = identifierToken.Identifier;
-			this.GetNextToken(); // eat identifier Token
+			else {
+				functionIdentifier = ""; // anonymous function
+			}
 
 			if (!(this.CurrentToken is OperatorToken openParenthesisToken && openParenthesisToken.Operator == "(")) {
 				Log.Error("Expected '(' in prototype");
