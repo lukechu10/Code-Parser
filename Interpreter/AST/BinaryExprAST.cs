@@ -16,6 +16,7 @@ namespace Interpreter.AST {
 				"/" => ExpressionType.Divide,
 				"<" => ExpressionType.LessThan,
 				">" => ExpressionType.GreaterThan,
+				"==" => ExpressionType.Equals,
 				_ => throw new ArgumentException($"op {op} is not a valid operator")
 			};
 

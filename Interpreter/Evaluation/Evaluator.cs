@@ -78,6 +78,7 @@ namespace Interpreter.Evaluation {
 				ExpressionType.Divide => left / right,
 				ExpressionType.LessThan => left < right ? 1.0 : 0.0,
 				ExpressionType.GreaterThan => left > right ? 1.0 : 0.0,
+				ExpressionType.Equals => left == right ? 1.0 : 0.0,
 				_ => throw new Exception("expression is not a valid BinaryExprAST node")
 			};
 		}

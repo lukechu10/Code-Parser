@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace Interpreter.Lexer {
@@ -86,9 +87,22 @@ namespace Interpreter.Lexer {
 				return new Token(TokenType.EndOfFile);
 			}
 
-			// return a character
-			string operatorLexeme = ((char)c).ToString();
-			return new OperatorToken(operatorLexeme);
+			// Token can be "=", "=>" or "=="
+			else if (c == '=') {
+				char nextChar = (char)this.Reader.Peek();
+				switch (nextChar) {
+					case '>':
+						this.Reader.Read(); // eat '>'
+						return new OperatorToken("=>");
+					case '=':
+						this.Reader.Read(); // eat '='
+						return new OperatorToken("==");
+					default:
+						return new OperatorToken("=");
+				}
+			}
+
+			return new OperatorToken(((char)c).ToString());
 		}
 	}
 }

@@ -13,6 +13,7 @@ namespace Interpreter.Parser {
 		static Parser() {
 			// smaller value = lower precedence
 			_binOpPrecedence = new Dictionary<string, int>() {
+				["=="] = 5, // equality operator
 				["<"] = 10,
 				[">"] = 10,
 				["+"] = 20,
@@ -260,8 +261,11 @@ namespace Interpreter.Parser {
 
 			if(prototype == null) return null;
 
-			this.GetNextToken(); // eat '='
-			this.GetNextToken(); // eat '=>'
+			if ((this.CurrentToken as OperatorToken)?.Operator != "=>") {
+				Log.Error("Expected '=>' after prototype");
+				return null;
+			}
+			this.GetNextToken(); // eat "=>" operator
 
 			ExprAST body = this.ParseExpr();
 			if(body == null) return null;

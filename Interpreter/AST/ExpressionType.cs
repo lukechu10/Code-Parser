@@ -6,6 +6,7 @@
 		Divide,
 		LessThan,
 		GreaterThan,
+		Equals,
 		Call,
 		Variable,
 		Prototype,
