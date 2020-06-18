@@ -22,26 +22,16 @@ namespace Interpreter
 				var tokenStream = new TokenStream(line);
 				var parser = new Parser.Parser(tokenStream);
 
-				FunctionAST functionAST;
+				Statement ast;
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
-				switch (tokenStream.CurrentToken.TokenType)
-				{
-					case Lexer.TokenType.EndOfFile:
-						return; // exit program
-					case Lexer.TokenType.Keyword_FUNCTION:
-						functionAST = parser.HandleFunction();
-						break;
-					default:
-						functionAST = parser.HandleTopLevelExpression(); // top level anonymous function
-						break;
-				}
+				ast = parser.Handle();
 
 				stopwatch.Stop();
 
-				if (functionAST != null)
+				if (ast != null)
 				{
-					string yaml = serializer.Serialize(functionAST); // serialize abstract syntax tree to YAML
+					string yaml = serializer.Serialize(ast); // serialize abstract syntax tree to YAML
 
 					Log.Secondary(yaml); // print abstract syntax tree in dark gray
 
@@ -49,7 +39,7 @@ namespace Interpreter
 					Console.ForegroundColor = ConsoleColor.White;
 					Console.Write("Evaluated result: ");
 
-					object evaluateResult = evaluator.EvaluateExpression(functionAST.Body);
+					object evaluateResult = evaluator.EvaluateStatement(ast);
 					if (evaluateResult is string errorMessage)
 					{
 						Log.Error(errorMessage);
@@ -57,6 +47,10 @@ namespace Interpreter
 					else if (evaluateResult is double doubleResult)
 					{
 						Log.Emphasis(doubleResult);
+					}
+					else
+					{
+						Log.Info("None");
 					}
 				}
 				else

@@ -9,8 +9,6 @@ namespace Interpreter.Parser
 	{
 		private static readonly Dictionary<string, int> _binOpPrecedence;
 
-		// public Token CurrentToken { get; private set; }
-		// private readonly Lexer.Lexer _scanner;
 		private readonly TokenStream _tokenStream;
 
 		static Parser()
@@ -18,33 +16,21 @@ namespace Interpreter.Parser
 			// smaller value = lower precedence
 			_binOpPrecedence = new Dictionary<string, int>()
 			{
+				["="] = 3, // assignment operator
 				["=="] = 5, // equality operator
 				["<"] = 10,
 				[">"] = 10,
 				["+"] = 20,
 				["-"] = 20,
 				["*"] = 40,
-				["/"] = 40
+				["/"] = 40,
 			};
 		}
 
-		// public Parser(Lexer.Lexer scanner)
-		// {
-		// 	this._scanner = scanner;
-		// }
-
-		public Parser(TokenStream tokenStream) {
+		public Parser(TokenStream tokenStream)
+		{
 			this._tokenStream = tokenStream;
 		}
-
-		/// <summary>
-		/// Gets the next Token from _scanner and saves the result into _currentToken
-		/// </summary>
-		/// <returns>The new Token</returns>
-		// public Token GetNextToken()
-		// {
-		// 	return this.CurrentToken = this._scanner.GetNextToken();
-		// }
 
 		/// <summary>
 		/// Looks up the operator precedence of the current <c>Token</c>
@@ -92,16 +78,16 @@ namespace Interpreter.Parser
 
 			this._tokenStream.Read(); // eat opening parenthesis '('
 
-			ExprAST expression = this.ParseExpr(); // parse expression between parenthesis
+			ExprAST expression = this.ParseExpression(); // parse expression between parenthesis
 			if (expression == null) return null;
 
-			if (!(this._tokenStream.CurrentToken is OperatorToken closeParanthesisToken) || closeParanthesisToken.Operator != ")")
+			if ((this._tokenStream.CurrentToken as OperatorToken)?.Operator != ")")
 			{
 				Log.Error("Expected ')' after expression");
 				return null;
 			}
 
-			Debug.Assert(closeParanthesisToken.Operator == ")");
+			Debug.Assert((this._tokenStream.CurrentToken as OperatorToken).Operator == ")");
 			this._tokenStream.Read(); // eat closing parenthesis ')'
 
 			return expression;
@@ -116,7 +102,7 @@ namespace Interpreter.Parser
 		///		::= identifier '=' expression
 		/// </code>
 		/// </summary>
-		/// <returns>A <c>VariableExprAST</c> if identifier is a variable reference, a <c>CallExprAST</c> if identifier is a function call</returns>
+		/// <returns>A <c>VariableExprAST</c> if identifier is a variable reference, a <c>CallExprAST</c> if identifier is a function call or a <c>VariableAssignmentExprAST</c> if identifier is a variable assignment statement</returns>
 		private ExprAST ParseIdentifierExpr()
 		{
 			Debug.Assert(this._tokenStream.CurrentToken is IdentifierToken);
@@ -138,7 +124,7 @@ namespace Interpreter.Parser
 
 					while (true)
 					{
-						ExprAST arg = this.ParseExpr(); // get argument
+						ExprAST arg = this.ParseExpression(); // get argument
 						if (arg == null) return null; // forward error
 
 						arguments.Add(arg);
@@ -174,7 +160,7 @@ namespace Interpreter.Parser
 				// parse variable assignment expression
 				this._tokenStream.Read(); // eat '=' character
 
-				ExprAST expression = this.ParseExpr(); // parse expression after '='
+				ExprAST expression = this.ParseExpression(); // parse expression after '='
 				return new VariableAssignmentExprAST(identifierName, expression);
 			}
 			else
@@ -184,15 +170,15 @@ namespace Interpreter.Parser
 		}
 
 		/// <summary>
-		/// Parses a variable declaration expression ("let" keyword)
+		/// Parses a variable declaration statement ("let" keyword)
 		/// <code>
-		/// declarationexpr
+		/// declarationstatement
 		///		::= 'let' identifier
 		///		::= 'let' identifier '=' expression
 		/// </code>
 		/// </summary>
-		/// <returns>An <c>ExprAST</c> node representing the variable declaration expression (value of variable)</returns>
-		private ExprAST ParseVariableDeclarationExpr()
+		/// <returns>A <c>VariableDeclarationExprAST</c> node representing the variable declaration statement</returns>
+		private VariableDeclarationExprAST ParseVariableDeclarationStatement()
 		{
 			Debug.Assert(this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_LET);
 			this._tokenStream.Read(); // eat "let" keyword
@@ -213,7 +199,7 @@ namespace Interpreter.Parser
 				this._tokenStream.Read(); // eat '=' character
 
 				// found an initializer after variable declaration
-				initializerExpression = this.ParseExpr();
+				initializerExpression = this.ParseExpression();
 			}
 			else
 				// no initializer, use default value = 0
@@ -289,7 +275,7 @@ namespace Interpreter.Parser
 		/// </code>
 		/// </summary>
 		/// <returns>An <c>FunctionAST</c> node representing the function declaration statement</returns>
-		private FunctionAST ParseFunction()
+		private FunctionAST ParseFunctionStatement()
 		{
 			Debug.Assert(this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_FUNCTION);
 
@@ -305,7 +291,7 @@ namespace Interpreter.Parser
 			}
 			this._tokenStream.Read(); // eat "=>" operator
 
-			ExprAST body = this.ParseExpr();
+			ExprAST body = this.ParseExpression();
 			if (body == null) return null;
 
 			return new FunctionAST(prototype, body);
@@ -316,7 +302,6 @@ namespace Interpreter.Parser
 		/// primaryexpr
 		///		::= identifierexpr
 		///		::= numberexpr
-		///		::= declarationexpr
 		///		::=	parenexpr
 		/// </code>
 		/// </summary>
@@ -338,11 +323,12 @@ namespace Interpreter.Parser
 					}
 				default:
 					// keyword token
-					switch (this._tokenStream.CurrentToken.TokenType)
-					{
-						case TokenType.Keyword_LET: return this.ParseVariableDeclarationExpr();
-						default: return null;
-					}
+					// switch (this._tokenStream.CurrentToken.TokenType)
+					// {
+					// 	case TokenType.Keyword_LET: return this.ParseVariableDeclarationExpr();
+					// 	default: return null;
+					// }
+					return null;
 			}
 		}
 
@@ -350,33 +336,17 @@ namespace Interpreter.Parser
 		/// Parses pairs of binary operator and primary expressions
 		/// <code>
 		/// binoprhs
-		///		::= ('+' primary)*
+		///		::= (operator primary)*
 		///	</code>
 		/// </summary>
 		/// <param name="exprPrecedence">The minimal operator precedence the function is allowed to eat</param>
 		/// <param name="lhs">The left hand side of the expression</param>
-		/// <returns>An <c>ExprAST</c></returns>
+		/// <returns>An <c>ExprAST</c> node</returns>
 		private ExprAST ParseBinOpRHS(int exprPrecedence, ExprAST lhs)
 		{
 			while (true)
 			{
 				int tokenPrecedence = this.GetCurrentTokenPrecedence();
-
-				// if (tokenPrecedence == -1)
-				// {
-				// 	// make sure this._scanner.LastCharacter is valid
-				// 	string operatorLexeme = (this._tokenStream.CurrentToken as OperatorToken).Operator;
-				// 	switch (operatorLexeme)
-				// 	{
-				// 		case "(":
-				// 		case ")":
-				// 		case ";":
-				// 			break;
-				// 		default:
-				// 			Log.Error($"Invalid operator {operatorLexeme}");
-				// 			return null;
-				// 	}
-				// }
 
 				/* if this is a binary operator that binds at least as tightly as the current binary operator, consume it, otherwise we are done
 				 * Example: "1 * 2 + 3"
@@ -416,7 +386,7 @@ namespace Interpreter.Parser
 		/// </code>
 		/// </summary>
 		/// <returns>An <c>ExprAST</c> node representing the expression</returns>
-		private ExprAST ParseExpr()
+		private ExprAST ParseExpression()
 		{
 			ExprAST lhs = this.ParsePrimaryExpr(); // left hand side of expression
 			if (lhs == null) return null; // forward error
@@ -431,19 +401,35 @@ namespace Interpreter.Parser
 		/// </code>
 		/// </summary>
 		/// <returns>A <c>FunctionAST</c> representing the anonymous function</returns>
-		private FunctionAST ParseTopLevelExpr()
-		{
-			ExprAST expression = this.ParseExpr();
-			if (expression == null) return null;
+		// private FunctionAST ParseTopLevelExpr()
+		// {
+		// 	ExprAST expression = this.ParseExpression();
+		// 	if (expression == null) return null;
 
-			// make an anonymous function prototype
-			PrototypeAST prototype = new PrototypeAST(string.Empty, new List<string>());
-			return new FunctionAST(prototype, expression);
+		// 	// make an anonymous function prototype
+		// 	PrototypeAST prototype = new PrototypeAST(string.Empty, new List<string>());
+		// 	return new FunctionAST(prototype, expression);
+		// }
+
+		/// <summary>
+		/// Parses a statement
+		/// <code>
+		/// statement
+		/// 	::= toplevelexpr
+		/// 	::= declarationstatement
+		/// </code>
+		/// </summary>
+		/// <returns></returns>
+		private Statement ParseStatement()
+		{
+			if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_LET) return this.ParseVariableDeclarationStatement();
+			else if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_FUNCTION) return this.ParseFunctionStatement();
+			else return this.ParseExpression();
 		}
 
-		public FunctionAST HandleTopLevelExpression()
+		public ExprAST HandleTopLevelExpression()
 		{
-			FunctionAST functionAST = this.ParseTopLevelExpr();
+			ExprAST functionAST = this.ParseExpression();
 
 			if (functionAST == null)
 			{
@@ -458,7 +444,7 @@ namespace Interpreter.Parser
 
 		public FunctionAST HandleFunction()
 		{
-			FunctionAST functionAST = this.ParseFunction();
+			FunctionAST functionAST = this.ParseFunctionStatement();
 
 			if (functionAST == null)
 			{
@@ -468,6 +454,21 @@ namespace Interpreter.Parser
 			else
 			{
 				return functionAST;
+			}
+		}
+
+		public Statement Handle()
+		{
+			Statement statement = this.ParseStatement();
+
+			if (statement == null)
+			{
+				this._tokenStream.Read(); // eat next token for error recovery
+				return null;
+			}
+			else
+			{
+				return statement;
 			}
 		}
 	}

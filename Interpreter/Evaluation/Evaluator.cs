@@ -14,7 +14,7 @@ namespace Interpreter.Evaluation
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
 		/// <returns>A <c>double</c> with the value of the expression or a <c>string</c> with an error message</returns>
-		public object EvaluateExpression(ExprAST expression)
+		public object EvaluateStatement(Statement expression)
 		{
 			try
 			{
@@ -30,7 +30,7 @@ namespace Interpreter.Evaluation
 		/// Evaluates an expression
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
-		private double Evaluate(ExprAST expression)
+		private double? Evaluate(Statement expression)
 		{
 			return expression switch
 			{
@@ -58,30 +58,30 @@ namespace Interpreter.Evaluation
 		{
 			if (this.Variables.ContainsKey(expression.Name))
 			{
-				this.Variables[expression.Name] = this.Evaluate(expression.AssignmentValue);
+				this.Variables[expression.Name] = this.Evaluate(expression.AssignmentValue) ?? 0;
 				return this.Variables[expression.Name];
 			}
 			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
 		}
 
-		private double EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression)
+		private double? EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression)
 		{
 			string identifier = expression.Name;
-			double initializerValue = this.Evaluate(expression.InitializerExpression);
+			double? initializerValue = this.Evaluate(expression.InitializerExpression);
 
 			if (this.Variables.ContainsKey(identifier))
 			{
 				throw new Exception($"Variable {identifier} already exists in current scope");
 			}
-			this.Variables[identifier] = initializerValue;
+			this.Variables[identifier] = initializerValue ?? 0;
 
-			return initializerValue;
+			return null;
 		}
 
 		private double EvaluateBinOpExpression(BinaryExprAST expression)
 		{
-			double left = this.Evaluate(expression.LeftExpression);
-			double right = this.Evaluate(expression.RightExpression);
+			double left = this.Evaluate(expression.LeftExpression) ?? 0;
+			double right = this.Evaluate(expression.RightExpression) ?? 0;
 
 			return expression.NodeType switch
 			{

@@ -7,8 +7,10 @@ using Interpreter.Parser;
 using Interpreter.Evaluation;
 using Interpreter.AST;
 
-namespace Tests {
-	public class E2E {
+namespace Tests
+{
+	public class E2E
+	{
 		[Theory]
 		// binary operators
 		[InlineData("1 + 1;", 2)]
@@ -20,30 +22,32 @@ namespace Tests {
 		// comparison operators
 		[InlineData("1 < 0;", 0)]
 		[InlineData("1 > 0;", 1)]
-		public void Expression(string testString, double expectedResult) {
+		public void Expression(string testString, double expectedResult)
+		{
 			var tokenStream = new TokenStream(testString);
 			var parser = new Parser(tokenStream);
 			var evaluator = new Evaluator();
 
-			ExprAST expression = parser.HandleTopLevelExpression().Body;
+			Statement expression = parser.Handle();
 
-			object value = evaluator.EvaluateExpression(expression);
+			object value = evaluator.EvaluateStatement(expression);
 
 			Assert.Equal(expectedResult, value);
 		}
 
 		[Theory]
-		[InlineData("let x;", 0)]
-		[InlineData("let x = 1;", 1)]
-		[InlineData("let x = 1 + 1;", 2)]
-		public void Variables(string testString, double expectedResult) {
+		[InlineData("let x;", null)]
+		[InlineData("let x = 1;", null)]
+		[InlineData("let x = 1 + 1;", null)]
+		public void Variables(string testString, object expectedResult)
+		{
 			var tokenStream = new TokenStream(testString);
 			var parser = new Parser(tokenStream);
 			var evaluator = new Evaluator();
 
-			ExprAST expression = parser.HandleTopLevelExpression().Body;
+			Statement expression = parser.Handle();
 
-			object value = evaluator.EvaluateExpression(expression);
+			object value = evaluator.EvaluateStatement(expression);
 
 			Assert.Equal(expectedResult, value);
 		}

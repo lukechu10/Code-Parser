@@ -1,5 +1,7 @@
-namespace Interpreter.AST {
-	public abstract class Statement {
-		
+namespace Interpreter.AST
+{
+	public abstract class Statement
+	{
+
 	}
 }

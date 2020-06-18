@@ -12,7 +12,7 @@ numberexpr ::= number
 parenexpr ::= '(' expression ')'
 ```
 
-#### Identifier
+#### Identifier expression
 *Example:* `foo` or `foo()` or `foo = 1` or `foo = bar + 1`
 ```
 identifierexpr
@@ -21,10 +21,10 @@ identifierexpr
 	::= identifier '=' expression
 ```
 
-#### Variable declaration expression
+#### Variable declaration statement
 *Example:* `let foo = 3` or `let foo = 1 + 2` or `let foo = bar + 1`
 ```
-declarationexpr
+declarationstatement
     ::= 'let' identifier
     ::= 'let' identifier '=' expression
 ```
@@ -40,10 +40,9 @@ functiondeclaration
 *Example:* `foo` or `3` or `(1 + 2)`
 ```
 primaryexpr
-	::= identifierexpr
 	::= numberexpr
-	::= declarationexpr
 	::= parenexpr
+	::= identifierexpr
 ```
 
 #### Binary operator right hand side
@@ -63,4 +62,11 @@ expression
 #### Top level expression
 ```
 toplevelexpr ::= expression
+```
+
+#### Statement
+```
+statement
+	::= toplevelexpr ';'
+	::= declarationstatement
 ```
