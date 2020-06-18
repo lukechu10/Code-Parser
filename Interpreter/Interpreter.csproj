@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LLVMSharp" Version="10.0.0-beta" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>
 
