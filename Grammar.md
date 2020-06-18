@@ -50,7 +50,7 @@ primaryexpr
 *Example:* `+ 3` or `* 2`
 ```
 binoprhs
-	::= ('+' primary)*
+	::= (operator primary)*
 ```
 
 #### Expression

@@ -11,21 +11,21 @@ namespace Interpreter
 
 		public static void Main(string[] args)
 		{
-			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
-			Parser.Parser parser = new Parser.Parser(scanner);
-
 			var evaluator = new Evaluation.Evaluator();
 
 			while (true)
 			{
 				Console.ForegroundColor = ConsoleColor.Gray;
 				Console.Write("ready> ");
-				parser.GetNextToken();
+
+				string line = Console.ReadLine();
+				var tokenStream = new TokenStream(line);
+				var parser = new Parser.Parser(tokenStream);
 
 				FunctionAST functionAST;
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
-				switch (parser.CurrentToken.TokenType)
+				switch (tokenStream.CurrentToken.TokenType)
 				{
 					case Lexer.TokenType.EndOfFile:
 						return; // exit program
@@ -49,7 +49,7 @@ namespace Interpreter
 					Console.ForegroundColor = ConsoleColor.White;
 					Console.Write("Evaluated result: ");
 
-					object evaluateResult = evaluator.EvaluateExpression(functionAST);
+					object evaluateResult = evaluator.EvaluateExpression(functionAST.Body);
 					if (evaluateResult is string errorMessage)
 					{
 						Log.Error(errorMessage);

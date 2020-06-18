@@ -6,3 +6,6 @@ tasks:
 vscode:
   extensions:
     - ms-vscode.csharp@1.21.12:kw8SkO8+aVTSFug281WfQQ==
+    - fernandoescolar.vscode-solution-explorer@0.3.10:czh4QzHp9m3LHDobmxyjeg==
+    - formulahendry.dotnet-test-explorer@0.7.3:VY4UZ1ap2QjwnlRvG8NJ7Q==
+    - k--kato.docomment@0.1.11:sQ8cn4eNE2WZj8t83aK8cA==

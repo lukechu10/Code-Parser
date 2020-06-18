@@ -1,6 +1,7 @@
 using System;
 using Xunit;
 using System.IO;
+using Interpreter;
 using Interpreter.Lexer;
 using Interpreter.Parser;
 using Interpreter.Evaluation;
@@ -20,13 +21,10 @@ namespace Tests {
 		[InlineData("1 < 0;", 0)]
 		[InlineData("1 > 0;", 1)]
 		public void Expression(string testString, double expectedResult) {
-			TextReader textReader = new StringReader(testString);
+			var tokenStream = new TokenStream(testString);
+			var parser = new Parser(tokenStream);
+			var evaluator = new Evaluator();
 
-			Lexer lexer = new Lexer(textReader);
-			Parser parser = new Parser(lexer);
-			Evaluator evaluator = new Evaluator();
-
-			parser.GetNextToken();
 			ExprAST expression = parser.HandleTopLevelExpression().Body;
 
 			object value = evaluator.EvaluateExpression(expression);
@@ -39,13 +37,10 @@ namespace Tests {
 		[InlineData("let x = 1;", 1)]
 		[InlineData("let x = 1 + 1;", 2)]
 		public void Variables(string testString, double expectedResult) {
-			TextReader textReader = new StringReader(testString);
+			var tokenStream = new TokenStream(testString);
+			var parser = new Parser(tokenStream);
+			var evaluator = new Evaluator();
 
-			Lexer lexer = new Lexer(textReader);
-			Parser parser = new Parser(lexer);
-			Evaluator evaluator = new Evaluator();
-
-			parser.GetNextToken();
 			ExprAST expression = parser.HandleTopLevelExpression().Body;
 
 			object value = evaluator.EvaluateExpression(expression);
