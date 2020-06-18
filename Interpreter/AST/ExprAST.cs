@@ -3,7 +3,7 @@ namespace Interpreter.AST
 	/// <summary>
 	/// Base class for AST expression nodes
 	/// </summary>
-	public abstract class ExprAST
+	public abstract class ExprAST : Statement
 	{
 		public abstract ExpressionType NodeType { get; protected set; }
 
