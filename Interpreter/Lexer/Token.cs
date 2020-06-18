@@ -1,5 +1,7 @@
-﻿namespace Interpreter.Lexer {
-	public enum TokenType : ushort {
+namespace Interpreter.Lexer
+{
+	public enum TokenType : ushort
+	{
 		/// <summary>
 		/// End of file token
 		/// </summary>
@@ -30,7 +32,8 @@
 		Keyword_EXTERN
 	}
 
-	public class Token {
+	public class Token
+	{
 		/// <summary>
 		/// The type of the <c>Token</c>
 		/// </summary>
@@ -39,29 +42,35 @@
 		public Token(TokenType tokenType) => this.TokenType = tokenType;
 	}
 
-	public sealed class IdentifierToken : Token {
+	public sealed class IdentifierToken : Token
+	{
 		public readonly string Identifier;
 
-		public IdentifierToken(string identifier) : base(TokenType.Identifier) {
+		public IdentifierToken(string identifier) : base(TokenType.Identifier)
+		{
 			this.Identifier = identifier;
 		}
 	}
 
-	public sealed class NumberToken : Token {
+	public sealed class NumberToken : Token
+	{
 		public readonly double Value;
 
-		public NumberToken(double value) : base(TokenType.Number) {
+		public NumberToken(double value) : base(TokenType.Number)
+		{
 			this.Value = value;
 		}
 	}
 
-	public sealed class OperatorToken : Token {
+	public sealed class OperatorToken : Token
+	{
 		/// <summary>
 		/// The lexeme of the operator represented by the <c>OperatorToken</c>
 		/// </summary>
 		public readonly string Operator;
 
-		public OperatorToken(string operatorLexeme) : base(TokenType.Operator) {
+		public OperatorToken(string operatorLexeme) : base(TokenType.Operator)
+		{
 			this.Operator = operatorLexeme;
 		}
 	}

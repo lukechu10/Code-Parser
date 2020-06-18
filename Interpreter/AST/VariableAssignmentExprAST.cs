@@ -1,5 +1,7 @@
-﻿namespace Interpreter.AST {
-	public sealed class VariableAssignmentExprAST : ExprAST {
+namespace Interpreter.AST
+{
+	public sealed class VariableAssignmentExprAST : ExprAST
+	{
 		/// <summary>
 		/// The identifier of the variable
 		/// </summary>
@@ -9,8 +11,9 @@
 		/// </summary>
 		public ExprAST AssignmentValue { get; private set; }
 		public override ExpressionType NodeType { get; protected set; } = ExpressionType.VariableAssignment;
-	
-		public VariableAssignmentExprAST(string identifier, ExprAST expression) {
+
+		public VariableAssignmentExprAST(string identifier, ExprAST expression)
+		{
 			this.Name = identifier;
 			this.AssignmentValue = expression;
 		}

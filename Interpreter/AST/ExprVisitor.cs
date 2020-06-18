@@ -1,28 +1,36 @@
-﻿namespace Interpreter.AST {
-	public abstract class ExprVisitor {
+namespace Interpreter.AST
+{
+	public abstract class ExprVisitor
+	{
 		protected ExprVisitor() { }
 
-		public virtual ExprAST Visit(ExprAST node) {
+		public virtual ExprAST Visit(ExprAST node)
+		{
 			return node?.Accept(this);
 		}
 
-		protected internal virtual ExprAST VisitExtension(ExprAST node) {
+		protected internal virtual ExprAST VisitExtension(ExprAST node)
+		{
 			return node.VisitChildren(this);
 		}
-		protected internal virtual ExprAST VisitBinaryExprAST(BinaryExprAST node) {
+		protected internal virtual ExprAST VisitBinaryExprAST(BinaryExprAST node)
+		{
 			this.Visit(node.LeftExpression);
 			this.Visit(node.RightExpression);
 
 			return node;
 		}
-		protected internal virtual ExprAST VisitCallExprAST(CallExprAST node) {
-			foreach (var argument in node.Arguments) {
+		protected internal virtual ExprAST VisitCallExprAST(CallExprAST node)
+		{
+			foreach (var argument in node.Arguments)
+			{
 				this.Visit(argument);
 			}
 
 			return node;
 		}
-		protected internal virtual ExprAST VisitFunctionAST(FunctionAST node) {
+		protected internal virtual ExprAST VisitFunctionAST(FunctionAST node)
+		{
 			this.Visit(node.Prototype);
 			this.Visit(node.Body);
 

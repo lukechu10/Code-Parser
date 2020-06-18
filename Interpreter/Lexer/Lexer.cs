@@ -1,9 +1,10 @@
-﻿using System.IO;
-using System.Reflection.Metadata.Ecma335;
+using System.IO;
 using System.Text;
 
-namespace Interpreter.Lexer {
-	public sealed class Lexer {
+namespace Interpreter.Lexer
+{
+	public sealed class Lexer
+	{
 		/// <summary>
 		/// The reader for the Lexer to read from
 		/// </summary>
@@ -16,28 +17,33 @@ namespace Interpreter.Lexer {
 		/// Creates a new Lexer instance which reads from the <c>TextReader</c>
 		/// </summary>
 		/// <param name="reader">The reader to read input from</param>
-		public Lexer(TextReader reader) {
+		public Lexer(TextReader reader)
+		{
 			this.Reader = reader;
 		}
 
 		/// <summary>
 		/// Reads the next <c>Token</c>
 		/// </summary>
-		public Token GetNextToken() {
+		public Token GetNextToken()
+		{
 			const int EOF = -1; // end of file
 			int c = ' ';
 
 			// skip any whitespace characters
-			while (char.IsWhiteSpace((char)c)) {
+			while (char.IsWhiteSpace((char)c))
+			{
 				c = this.Reader.Read();
 			}
 
 			// c is a letter or '_': token can be a keyword or an identifier
-			if (char.IsLetter((char)c) || c == '_') {
+			if (char.IsLetter((char)c) || c == '_')
+			{
 				this._identifierBuilder.Append((char)c);
 
 				// get the entire identifier
-				while (char.IsLetterOrDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '_') {
+				while (char.IsLetterOrDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '_')
+				{
 					this._identifierBuilder.Append((char)this.Reader.Read());
 				}
 
@@ -57,10 +63,12 @@ namespace Interpreter.Lexer {
 			}
 
 			// c is a number literal
-			else if (char.IsDigit((char)c)) {
+			else if (char.IsDigit((char)c))
+			{
 				this._numberBuilder.Append((char)c);
 				// while next char is a number or '.', add to _numberBuilder
-				while (char.IsDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '.') {
+				while (char.IsDigit((char)this.Reader.Peek()) || this.Reader.Peek() == '.')
+				{
 					this._numberBuilder.Append((char)this.Reader.Read());
 				}
 
@@ -71,26 +79,32 @@ namespace Interpreter.Lexer {
 			}
 
 			// comment until end of line
-			else if (c == '#') {
-				while (c != EOF && c != '\n' && c != '\r') {
+			else if (c == '#')
+			{
+				while (c != EOF && c != '\n' && c != '\r')
+				{
 					c = this.Reader.Read(); // throw away next char
 				}
 
 				// end of file not reached, continue reading stream to get next token
-				if (c != EOF) {
+				if (c != EOF)
+				{
 					return this.GetNextToken(); // recursively get next token after comment
 				}
 			}
 
 			// found end of file
-			else if (c == EOF) {
+			else if (c == EOF)
+			{
 				return new Token(TokenType.EndOfFile);
 			}
 
 			// Token can be "=", "=>" or "=="
-			else if (c == '=') {
+			else if (c == '=')
+			{
 				char nextChar = (char)this.Reader.Peek();
-				switch (nextChar) {
+				switch (nextChar)
+				{
 					case '>':
 						this.Reader.Read(); // eat '>'
 						return new OperatorToken("=>");

@@ -3,17 +3,21 @@ using System;
 using System.Diagnostics;
 using YamlDotNet.Serialization;
 
-namespace Interpreter {
-	internal class Program {
+namespace Interpreter
+{
+	internal class Program
+	{
 		private static readonly ISerializer serializer = new SerializerBuilder().WithMaximumRecursion(10000).Build();
 
-		public static void Main(string[] args) {
+		public static void Main(string[] args)
+		{
 			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
 			Parser.Parser parser = new Parser.Parser(scanner);
-			
+
 			var evaluator = new Evaluation.Evaluator();
 
-			while (true) {
+			while (true)
+			{
 				Console.ForegroundColor = ConsoleColor.Gray;
 				Console.Write("ready> ");
 				parser.GetNextToken();
@@ -21,7 +25,8 @@ namespace Interpreter {
 				FunctionAST functionAST;
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
-				switch (parser.CurrentToken.TokenType) {
+				switch (parser.CurrentToken.TokenType)
+				{
 					case Lexer.TokenType.EndOfFile:
 						return; // exit program
 					case Lexer.TokenType.Keyword_FUNCTION:
@@ -34,7 +39,8 @@ namespace Interpreter {
 
 				stopwatch.Stop();
 
-				if (functionAST != null) {
+				if (functionAST != null)
+				{
 					string yaml = serializer.Serialize(functionAST); // serialize abstract syntax tree to YAML
 
 					Log.Secondary(yaml); // print abstract syntax tree in dark gray
@@ -44,16 +50,19 @@ namespace Interpreter {
 					Console.Write("Evaluated result: ");
 
 					object evaluateResult = evaluator.EvaluateExpression(functionAST);
-					if (evaluateResult is string errorMessage) {
+					if (evaluateResult is string errorMessage)
+					{
 						Log.Error(errorMessage);
 					}
-					else if (evaluateResult is double doubleResult) {
+					else if (evaluateResult is double doubleResult)
+					{
 						Log.Emphasis(doubleResult);
 					}
 				}
-				else {
+				else
+				{
 					Log.Warning("Invalid syntax, no abstract syntax tree generated");
-				}				
+				}
 			}
 		}
 	}

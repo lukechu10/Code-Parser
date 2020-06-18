@@ -1,10 +1,12 @@
-﻿using Interpreter.AST;
+using Interpreter.AST;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace Interpreter.Evaluation {
-	public sealed class Evaluator {
+namespace Interpreter.Evaluation
+{
+	public sealed class Evaluator
+	{
 		public Dictionary<string, double> Variables { get; private set; } = new Dictionary<string, double>();
 
 		/// <summary>
@@ -12,11 +14,14 @@ namespace Interpreter.Evaluation {
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
 		/// <returns>A <c>double</c> with the value of the expression or a <c>string</c> with an error message</returns>
-		public object EvaluateExpression(ExprAST expression) {
-			try {
+		public object EvaluateExpression(ExprAST expression)
+		{
+			try
+			{
 				return this.Evaluate(expression);
 			}
-			catch (Exception err) {
+			catch (Exception err)
+			{
 				return $"Error: {err.Message}";
 			}
 		}
@@ -25,7 +30,8 @@ namespace Interpreter.Evaluation {
 		/// Evaluates an expression
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
-		private double Evaluate(ExprAST expression) {
+		private double Evaluate(ExprAST expression)
+		{
 			return expression switch
 			{
 				NumberExprAST numberExpression => numberExpression.Value,
@@ -37,28 +43,34 @@ namespace Interpreter.Evaluation {
 			};
 		}
 
-		private double EvaluateVariableExpression(VariableExprAST expression) {
+		private double EvaluateVariableExpression(VariableExprAST expression)
+		{
 			double variableValue;
 
-			if (this.Variables.TryGetValue(expression.Name, out variableValue)) {
+			if (this.Variables.TryGetValue(expression.Name, out variableValue))
+			{
 				return variableValue;
 			}
 			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
 		}
 
-		private double EvaluateVariableAssignmentExpression(VariableAssignmentExprAST expression) {
-			if (this.Variables.ContainsKey(expression.Name)) {
+		private double EvaluateVariableAssignmentExpression(VariableAssignmentExprAST expression)
+		{
+			if (this.Variables.ContainsKey(expression.Name))
+			{
 				this.Variables[expression.Name] = this.Evaluate(expression.AssignmentValue);
 				return this.Variables[expression.Name];
 			}
 			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
 		}
 
-		private double EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression) {
+		private double EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression)
+		{
 			string identifier = expression.Name;
 			double initializerValue = this.Evaluate(expression.InitializerExpression);
 
-			if (this.Variables.ContainsKey(identifier)) {
+			if (this.Variables.ContainsKey(identifier))
+			{
 				throw new Exception($"Variable {identifier} already exists in current scope");
 			}
 			this.Variables[identifier] = initializerValue;
@@ -66,7 +78,8 @@ namespace Interpreter.Evaluation {
 			return initializerValue;
 		}
 
-		private double EvaluateBinOpExpression(BinaryExprAST expression) {
+		private double EvaluateBinOpExpression(BinaryExprAST expression)
+		{
 			double left = this.Evaluate(expression.LeftExpression);
 			double right = this.Evaluate(expression.RightExpression);
 

@@ -1,5 +1,7 @@
-﻿namespace Interpreter.AST {
-	public enum ExpressionType {
+namespace Interpreter.AST
+{
+	public enum ExpressionType
+	{
 		Add,
 		Substract,
 		Multiply,

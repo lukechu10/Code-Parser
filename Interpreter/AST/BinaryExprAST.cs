@@ -1,13 +1,16 @@
-﻿using System;
+using System;
 
-namespace Interpreter.AST {
-	public sealed class BinaryExprAST : ExprAST {
+namespace Interpreter.AST
+{
+	public sealed class BinaryExprAST : ExprAST
+	{
 		public ExprAST LeftExpression { get; private set; }
 		public ExprAST RightExpression { get; private set; }
 
 		public override ExpressionType NodeType { get; protected set; }
 
-		public BinaryExprAST(string op, ExprAST leftExpression, ExprAST rightExpression) {
+		public BinaryExprAST(string op, ExprAST leftExpression, ExprAST rightExpression)
+		{
 			this.NodeType = op switch
 			{
 				"+" => ExpressionType.Add,
@@ -24,7 +27,8 @@ namespace Interpreter.AST {
 			this.RightExpression = rightExpression;
 		}
 
-		protected internal override ExprAST Accept(ExprVisitor visitor) {
+		protected internal override ExprAST Accept(ExprVisitor visitor)
+		{
 			return visitor.VisitBinaryExprAST(this);
 		}
 	}
