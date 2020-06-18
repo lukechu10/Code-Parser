@@ -17,7 +17,7 @@ parenexpr ::= '(' expression ')'
 ```
 identifierexpr
 	::= identifier
-    ::= identifier '(' expression* ')'
+	::= identifier '(' expression? | expression (',' expression)* ')'
 	::= identifier '=' expression
 ```
 
@@ -25,15 +25,22 @@ identifierexpr
 *Example:* `let foo = 3` or `let foo = 1 + 2` or `let foo = bar + 1`
 ```
 declarationstatement
-    ::= 'let' identifier
-    ::= 'let' identifier '=' expression
+	::= 'let' identifier
+	::= 'let' identifier '=' expression
 ```
 
-#### Function declaration (WIP)
-*Example:* `function foo() => 1 + 1` or `function foo(x) => x * x` or `function foo(x, y) => x + y`
+#### Function prototype
+*Example:* `()` or `(x)` or `(x, y)` or `(x, y, z)`
+```
+prototype
+	::= '(' expression? | expression (',' expression)* ')'
+```
+
+#### Function declaration
+*Example:* `function foo() => 1 + 1` or `function foo(x) => x * x` or `function foo(x, y) => x + y` or `function () => 1`
 ```
 functiondeclaration
-	::= 'function' identifier '(' expression* ')' '=>' expression
+	::= 'function' identifier? prototype '=>' expression
 ```
 
 #### Primary expression
@@ -56,7 +63,7 @@ binoprhs
 *Example:* `1 + 2` or `bar + 1` or `(1 + 2) * 3`
 ```
 expression
-    ::= primary binoprhs
+	::= primary binoprhs
 ```
 
 #### Top level expression
@@ -67,6 +74,7 @@ toplevelexpr ::= expression
 #### Statement
 ```
 statement
-	::= toplevelexpr ';'
+	::= toplevelexpr
 	::= declarationstatement
+	::= functiondeclaration
 ```
