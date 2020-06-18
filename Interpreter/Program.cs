@@ -1,4 +1,4 @@
-﻿using Interpreter.AST;
+using Interpreter.AST;
 using System;
 using System.Diagnostics;
 using YamlDotNet.Serialization;
@@ -10,7 +10,7 @@ namespace Interpreter {
 		public static void Main(string[] args) {
 			Lexer.Lexer scanner = new Lexer.Lexer(Console.In);
 			Parser.Parser parser = new Parser.Parser(scanner);
-
+			
 			var evaluator = new Evaluation.Evaluator();
 
 			while (true) {
@@ -40,7 +40,7 @@ namespace Interpreter {
 					Log.Secondary(yaml); // print abstract syntax tree in dark gray
 
 					Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
-					Console.ForegroundColor = ConsoleColor.DarkGray;
+					Console.ForegroundColor = ConsoleColor.White;
 					Console.Write("Evaluated result: ");
 
 					object evaluateResult = evaluator.EvaluateExpression(functionAST);

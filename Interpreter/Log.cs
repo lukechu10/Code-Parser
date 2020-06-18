@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,7 +19,7 @@ namespace Interpreter {
 		}
 
 		public static void Secondary(object message) {
-			Console.ForegroundColor = ConsoleColor.DarkGray;
+			Console.ForegroundColor = ConsoleColor.White;
 			Console.WriteLine(message);
 			Console.ForegroundColor = _initialConsoleColor;
 		}
