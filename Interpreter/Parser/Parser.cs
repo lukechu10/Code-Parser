@@ -427,36 +427,6 @@ namespace Interpreter.Parser
 			else return this.ParseExpression();
 		}
 
-		public ExprAST HandleTopLevelExpression()
-		{
-			ExprAST functionAST = this.ParseExpression();
-
-			if (functionAST == null)
-			{
-				this._tokenStream.Read(); // eat next token for error recovery
-				return null;
-			}
-			else
-			{
-				return functionAST;
-			}
-		}
-
-		public FunctionAST HandleFunction()
-		{
-			FunctionAST functionAST = this.ParseFunctionStatement();
-
-			if (functionAST == null)
-			{
-				this._tokenStream.Read(); // eat next token for error recovery
-				return null;
-			}
-			else
-			{
-				return functionAST;
-			}
-		}
-
 		public Statement Handle()
 		{
 			Statement statement = this.ParseStatement();
