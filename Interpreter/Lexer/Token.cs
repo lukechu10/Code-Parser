@@ -39,7 +39,10 @@ namespace Interpreter.Lexer
 		/// </summary>
 		public TokenType TokenType { get; private set; }
 
-		public Token(TokenType tokenType) => this.TokenType = tokenType;
+		public Token(TokenType tokenType)
+		{
+			this.TokenType = tokenType;
+		}
 	}
 
 	public sealed class IdentifierToken : Token

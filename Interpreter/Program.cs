@@ -1,6 +1,9 @@
 using Interpreter.AST;
 using System;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.Diagnostics;
+using System.IO;
 using YamlDotNet.Serialization;
 
 namespace Interpreter
@@ -9,14 +12,19 @@ namespace Interpreter
 	{
 		private static readonly ISerializer serializer = new SerializerBuilder().WithMaximumRecursion(10000).Build();
 
-		public static void Main(string[] args)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="showAst">Show the abstract syntax tree generated</param>
+		/// <param name="showDebugInfo">Show parsing debug information</param>
+		public static void Main(bool showAst = false, bool showDebugInfo = false)
 		{
 			var evaluator = new Evaluation.Evaluator();
 
 			while (true)
 			{
 				Console.ForegroundColor = ConsoleColor.Gray;
-				Console.Write("ready> ");
+				Console.Write("> ");
 
 				string line = Console.ReadLine();
 				var tokenStream = new TokenStream(line);
@@ -33,11 +41,17 @@ namespace Interpreter
 				{
 					string yaml = serializer.Serialize(ast); // serialize abstract syntax tree to YAML
 
-					Log.Secondary(yaml); // print abstract syntax tree in dark gray
+					if (showAst)
+					{
+						Log.Secondary(yaml); // print abstract syntax tree in dark gray
+					}
 
-					Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
-					Console.ForegroundColor = ConsoleColor.White;
-					Console.Write("Evaluated result: ");
+					if (showDebugInfo)
+					{
+						Log.Secondary($"Parsed input in {stopwatch.ElapsedMilliseconds}ms");
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.Write("Evaluated result: ");
+					}
 
 					object evaluateResult = evaluator.EvaluateStatement(ast);
 					if (evaluateResult is string errorMessage)

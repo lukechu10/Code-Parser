@@ -48,7 +48,7 @@ namespace Interpreter
 		/// <returns>The next <c>Token<c></returns>
 		public Token Read()
 		{
-			return this.Tokens[_index++];
+			return this.Tokens[this._index++];
 		}
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace Interpreter
 		/// <returns>The next <c>Token<c></returns>
 		public Token Peek()
 		{
-			return this.Tokens[_index + 1];
+			return this.Tokens[this._index + 1];
 		}
 
 		/// <summary>
@@ -67,9 +67,9 @@ namespace Interpreter
 		/// <returns>The <c>x</c>th token after the current token</returns>
 		public Token Peek(int x)
 		{
-			return this.Tokens[_index + x];
+			return this.Tokens[this._index + x];
 		}
 
-		public Token CurrentToken => this.Tokens[_index];
+		public Token CurrentToken => this.Tokens[this._index];
 	}
 }

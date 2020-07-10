@@ -1,19 +1,16 @@
-using System;
-using System.Collections.Generic;
-using Xunit;
-using System.IO;
 using Interpreter;
+using Interpreter.AST;
+using Interpreter.Evaluation;
 using Interpreter.Lexer;
 using Interpreter.Parser;
-using Interpreter.Evaluation;
-using Interpreter.AST;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Xunit;
 
-namespace Tests
-{
-	public class E2E
-	{
-		private void Evaluate(string testString, object expectedResult)
-		{
+namespace Tests {
+	public class E2E {
+		private void Evaluate(string testString, object expectedResult) {
 			var tokenStream = new TokenStream(testString);
 			var parser = new Parser(tokenStream);
 			var evaluator = new Evaluator();
@@ -36,8 +33,7 @@ namespace Tests
 		// comparison operators
 		[InlineData("1 < 0;", 0)]
 		[InlineData("1 > 0;", 1)]
-		public void Expression(string testString, double expectedResult)
-		{
+		public void Expression(string testString, double expectedResult) {
 			this.Evaluate(testString, expectedResult);
 		}
 
@@ -45,18 +41,15 @@ namespace Tests
 		[InlineData("let x;", null)]
 		[InlineData("let x = 1;", null)]
 		[InlineData("let x = 1 + 1;", null)]
-		public void Variables(string testString, object expectedResult)
-		{
+		public void Variables(string testString, object expectedResult) {
 			this.Evaluate(testString, expectedResult);
 		}
 
 		[Theory]
 		[MemberData(nameof(VariableAssignmentData))]
-		public void VariableAssignment((string, object)[] statements)
-		{
+		public void VariableAssignment((string, object)[] statements) {
 			var evaluator = new Evaluator();
-			foreach ((string, object) statement in statements)
-			{
+			foreach ((string, object) statement in statements) {
 				var tokenStream = new TokenStream(statement.Item1);
 				var parser = new Parser(tokenStream);
 

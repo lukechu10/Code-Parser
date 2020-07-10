@@ -51,7 +51,10 @@ namespace Interpreter.Evaluation
 			{
 				return variableValue;
 			}
-			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
+			else
+			{
+				throw new Exception($"Variable {expression.Name} does not exist in current scope");
+			}
 		}
 
 		private double EvaluateVariableAssignmentExpression(VariableAssignmentExprAST expression)
@@ -61,7 +64,10 @@ namespace Interpreter.Evaluation
 				this.Variables[expression.Name] = this.Evaluate(expression.AssignmentValue) ?? 0;
 				return this.Variables[expression.Name];
 			}
-			else throw new Exception($"Variable {expression.Name} does not exist in current scope");
+			else
+			{
+				throw new Exception($"Variable {expression.Name} does not exist in current scope");
+			}
 		}
 
 		private double? EvaluateVariableDeclarationExpression(VariableDeclarationExprAST expression)

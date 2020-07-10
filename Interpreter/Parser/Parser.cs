@@ -38,7 +38,10 @@ namespace Interpreter.Parser
 		/// <returns>A number representing the operator precedence of the current <c>Token</c> or <c>-1</c> if precedence not found</returns>
 		private int GetCurrentTokenPrecedence()
 		{
-			if (!(this._tokenStream.CurrentToken is OperatorToken operatorToken)) return -1; // not an OperatorToken
+			if (!(this._tokenStream.CurrentToken is OperatorToken operatorToken))
+			{
+				return -1; // not an OperatorToken
+			}
 
 			string operatorLexeme = operatorToken.Operator;
 			if (_binOpPrecedence.TryGetValue(operatorLexeme, out int precedence))
@@ -79,7 +82,10 @@ namespace Interpreter.Parser
 			this._tokenStream.Read(); // eat opening parenthesis '('
 
 			ExprAST expression = this.ParseExpression(); // parse expression between parenthesis
-			if (expression == null) return null;
+			if (expression == null)
+			{
+				return null;
+			}
 
 			if ((this._tokenStream.CurrentToken as OperatorToken)?.Operator != ")")
 			{
@@ -125,14 +131,19 @@ namespace Interpreter.Parser
 					while (true)
 					{
 						ExprAST arg = this.ParseExpression(); // get argument
-						if (arg == null) return null; // forward error
+						if (arg == null)
+						{
+							return null; // forward error
+						}
 
 						arguments.Add(arg);
 
 						if (this._tokenStream.CurrentToken is OperatorToken operatorToken)
 						{
-							if (operatorToken.Operator == ")") break; // end of argument list reached
-
+							if (operatorToken.Operator == ")")
+							{
+								break; // end of argument list reached
+							}
 							else if (operatorToken.Operator != ",")
 							{
 								Debug.Assert(operatorToken.Operator != ")" && operatorToken.Operator != ",");
@@ -202,8 +213,10 @@ namespace Interpreter.Parser
 				initializerExpression = this.ParseExpression();
 			}
 			else
+			{
 				// no initializer, use default value = 0
 				initializerExpression = new NumberExprAST(0);
+			}
 
 			// construct VariableDeclarationExprAST
 			return new VariableDeclarationExprAST(identifier, initializerExpression);
@@ -246,8 +259,14 @@ namespace Interpreter.Parser
 
 				if (this._tokenStream.CurrentToken is OperatorToken operatorToken)
 				{
-					if (operatorToken.Operator == ",") this._tokenStream.Read(); // eat ',' operator
-					else if (operatorToken.Operator == ")") break; // end of prototype found
+					if (operatorToken.Operator == ",")
+					{
+						this._tokenStream.Read(); // eat ',' operator
+					}
+					else if (operatorToken.Operator == ")")
+					{
+						break; // end of prototype found
+					}
 					else
 					{
 						Log.Error($"Unknown operator {operatorToken.Operator} in prototype");
@@ -282,7 +301,10 @@ namespace Interpreter.Parser
 			this._tokenStream.Read(); // eat "function" keyword
 			PrototypeAST prototype = this.ParsePrototype();
 
-			if (prototype == null) return null;
+			if (prototype == null)
+			{
+				return null;
+			}
 
 			if ((this._tokenStream.CurrentToken as OperatorToken)?.Operator != "=>")
 			{
@@ -292,7 +314,10 @@ namespace Interpreter.Parser
 			this._tokenStream.Read(); // eat "=>" operator
 
 			ExprAST body = this.ParseExpression();
-			if (body == null) return null;
+			if (body == null)
+			{
+				return null;
+			}
 
 			return new FunctionAST(prototype, body);
 		}
@@ -315,7 +340,10 @@ namespace Interpreter.Parser
 				case NumberToken _:
 					return this.ParseNumberExpr();
 				case OperatorToken operatorToken:
-					if (operatorToken.Operator == "(") return this.ParseParenExpr();
+					if (operatorToken.Operator == "(")
+					{
+						return this.ParseParenExpr();
+					}
 					else
 					{
 						Log.Error($"Unexpected operator {operatorToken.Operator} when expecting an expression");
@@ -364,14 +392,20 @@ namespace Interpreter.Parser
 				this._tokenStream.Read(); // eat binary operator
 
 				ExprAST rhs = this.ParsePrimaryExpr(); // parse expression after binary operator
-				if (rhs == null) return null; // forward error
+				if (rhs == null)
+				{
+					return null; // forward error
+				}
 
 				// if binary operator binds less tightly with RHS than the operator after RHS, let the pending operator take RHS as its LHS.
 				int nextPrecedence = this.GetCurrentTokenPrecedence();
 				if (tokenPrecedence < nextPrecedence)
 				{
 					rhs = this.ParseBinOpRHS(tokenPrecedence + 1, rhs);
-					if (rhs == null) return null;
+					if (rhs == null)
+					{
+						return null;
+					}
 				}
 
 				lhs = new BinaryExprAST(binaryOperator, lhs, rhs);
@@ -389,7 +423,10 @@ namespace Interpreter.Parser
 		private ExprAST ParseExpression()
 		{
 			ExprAST lhs = this.ParsePrimaryExpr(); // left hand side of expression
-			if (lhs == null) return null; // forward error
+			if (lhs == null)
+			{
+				return null; // forward error
+			}
 
 			return this.ParseBinOpRHS(0, lhs);
 		}
@@ -422,9 +459,18 @@ namespace Interpreter.Parser
 		/// <returns></returns>
 		private Statement ParseStatement()
 		{
-			if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_LET) return this.ParseVariableDeclarationStatement();
-			else if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_FUNCTION) return this.ParseFunctionStatement();
-			else return this.ParseExpression();
+			if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_LET)
+			{
+				return this.ParseVariableDeclarationStatement();
+			}
+			else if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_FUNCTION)
+			{
+				return this.ParseFunctionStatement();
+			}
+			else
+			{
+				return this.ParseExpression();
+			}
 		}
 
 		public Statement Handle()

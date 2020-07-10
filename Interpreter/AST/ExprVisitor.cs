@@ -36,8 +36,19 @@ namespace Interpreter.AST
 
 			return node;
 		}
-		protected internal virtual ExprAST VisitVariableExprAST(VariableExprAST node) => node;
-		protected internal virtual ExprAST VisitPrototypeAST(PrototypeAST node) => node;
-		protected internal virtual ExprAST VisitNumberExprAST(NumberExprAST node) => node;
+		protected internal virtual ExprAST VisitVariableExprAST(VariableExprAST node)
+		{
+			return node;
+		}
+
+		protected internal virtual ExprAST VisitPrototypeAST(PrototypeAST node)
+		{
+			return node;
+		}
+
+		protected internal virtual ExprAST VisitNumberExprAST(NumberExprAST node)
+		{
+			return node;
+		}
 	}
 }
