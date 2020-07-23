@@ -17,7 +17,7 @@ namespace Interpreter.AST
 			this.NodeType = ExpressionType.Number;
 		}
 
-		protected internal override ExprAST Accept(ExprVisitor visitor)
+		protected internal override ASTNode Accept(ExprVisitor visitor)
 		{
 			return visitor.VisitNumberExprAST(this);
 		}

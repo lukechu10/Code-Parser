@@ -464,7 +464,7 @@ namespace Interpreter.Parser
 		/// </code>
 		/// </summary>
 		/// <returns></returns>
-		private Statement ParseStatement()
+		private ASTNode ParseStatement()
 		{
 			if (this._tokenStream.CurrentToken.TokenType == TokenType.Keyword_LET)
 			{
@@ -484,9 +484,9 @@ namespace Interpreter.Parser
 		/// Parses a statement
 		/// </summary>
 		/// <returns>The parsed statement</returns>
-		public Statement HandleStatement()
+		public ASTNode HandleStatement()
 		{
-			Statement statement = this.ParseStatement();
+			ASTNode statement = this.ParseStatement();
 
 			if (statement == null)
 			{

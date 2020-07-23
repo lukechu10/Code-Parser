@@ -14,7 +14,7 @@ namespace Interpreter.Evaluation
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
 		/// <returns>A <c>double</c> with the value of the expression or a <c>string</c> with an error message</returns>
-		public object EvaluateStatement(Statement expression)
+		public object EvaluateStatement(ASTNode expression)
 		{
 			try
 			{
@@ -30,7 +30,7 @@ namespace Interpreter.Evaluation
 		/// Evaluates an expression
 		/// </summary>
 		/// <param name="expression">the expression to evaluate</param>
-		private double? Evaluate(Statement expression)
+		private double? Evaluate(ASTNode expression)
 		{
 			return expression switch
 			{

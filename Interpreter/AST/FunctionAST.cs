@@ -26,7 +26,7 @@ namespace Interpreter.AST
 			this.Body = body;
 		}
 
-		protected internal override ExprAST Accept(ExprVisitor visitor)
+		protected internal override ASTNode Accept(ExprVisitor visitor)
 		{
 			return visitor.VisitFunctionAST(this);
 		}

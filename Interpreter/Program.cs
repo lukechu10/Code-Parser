@@ -30,7 +30,7 @@ namespace Interpreter
 				var tokenStream = new TokenStream(line);
 				var parser = new Parser.Parser(tokenStream);
 
-				Statement ast;
+				ASTNode ast;
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
 				ast = parser.HandleStatement();

@@ -4,12 +4,12 @@ namespace Interpreter.AST
 	{
 		protected ExprVisitor() { }
 
-		public virtual ExprAST Visit(ExprAST node)
+		public virtual ASTNode Visit(ASTNode node)
 		{
 			return node?.Accept(this);
 		}
 
-		protected internal virtual ExprAST VisitExtension(ExprAST node)
+		protected internal virtual ASTNode VisitExtension(ASTNode node)
 		{
 			return node.VisitChildren(this);
 		}
