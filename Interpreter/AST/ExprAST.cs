@@ -10,6 +10,7 @@ namespace Interpreter.AST
 		/// </summary>
 		public abstract ExpressionType NodeType { get; protected set; }
 
+		#region code gen visitor
 		protected internal virtual ExprAST VisitChildren(ExprVisitor visitor)
 		{
 			return visitor.Visit(this);
@@ -19,5 +20,7 @@ namespace Interpreter.AST
 		{
 			return visitor.VisitExtension(this);
 		}
+
+		#endregion
 	}
 }

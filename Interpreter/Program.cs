@@ -33,7 +33,7 @@ namespace Interpreter
 				Statement ast;
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
-				ast = parser.Handle();
+				ast = parser.HandleStatement();
 
 				stopwatch.Stop();
 

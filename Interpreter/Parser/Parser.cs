@@ -5,6 +5,9 @@ using System.Diagnostics;
 
 namespace Interpreter.Parser
 {
+	/// <summary>
+	/// Represents a parser instance that parses source code
+	/// </summary>
 	public sealed class Parser
 	{
 		private static readonly Dictionary<string, int> _binOpPrecedence;
@@ -27,6 +30,10 @@ namespace Interpreter.Parser
 			};
 		}
 
+		/// <summary>
+		/// Create a new Parser instance
+		/// </summary>
+		/// <param name="tokenStream">The TokenStream for the parser to read from</param>
 		public Parser(TokenStream tokenStream)
 		{
 			this._tokenStream = tokenStream;
@@ -473,7 +480,11 @@ namespace Interpreter.Parser
 			}
 		}
 
-		public Statement Handle()
+		/// <summary>
+		/// Parses a statement
+		/// </summary>
+		/// <returns>The parsed statement</returns>
+		public Statement HandleStatement()
 		{
 			Statement statement = this.ParseStatement();
 

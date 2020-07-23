@@ -15,7 +15,7 @@ namespace Tests {
 			var parser = new Parser(tokenStream);
 			var evaluator = new Evaluator();
 
-			Statement expression = parser.Handle();
+			Statement expression = parser.HandleStatement();
 
 			object result = evaluator.EvaluateStatement(expression);
 
@@ -53,7 +53,7 @@ namespace Tests {
 				var tokenStream = new TokenStream(statement.Item1);
 				var parser = new Parser(tokenStream);
 
-				Statement expression = parser.Handle();
+				Statement expression = parser.HandleStatement();
 
 				object result = evaluator.EvaluateStatement(expression);
 
