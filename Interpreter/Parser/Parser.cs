@@ -439,23 +439,6 @@ namespace Interpreter.Parser
 		}
 
 		/// <summary>
-		/// Parses a top level expression and wraps it into an anonymous function
-		/// <code>
-		/// toplevelexpr ::= expression
-		/// </code>
-		/// </summary>
-		/// <returns>A <c>FunctionAST</c> representing the anonymous function</returns>
-		// private FunctionAST ParseTopLevelExpr()
-		// {
-		// 	ExprAST expression = this.ParseExpression();
-		// 	if (expression == null) return null;
-
-		// 	// make an anonymous function prototype
-		// 	PrototypeAST prototype = new PrototypeAST(string.Empty, new List<string>());
-		// 	return new FunctionAST(prototype, expression);
-		// }
-
-		/// <summary>
 		/// Parses a statement
 		/// <code>
 		/// statement
